@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectEditorSettingsVer3_0 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>ProjectEditorSettings</Name>
+  <Version>3</Version>
+  <Project>
+    <AutomaticSorting>false</AutomaticSorting>
+    <PostCompileCommand />
+    <StartDebugCommand />
+  </Project>
+  <PlatformSettings>
+    <Platforms>
+      <Platform>Win64</Platform>
+    </Platforms>
+  </PlatformSettings>
+  <OriginalFilename>$(script)\RageMenu\RageMenu.scproj</OriginalFilename>
+  <Language>SanScript</Language>
+  <CurrentCompilingSettingsIndex>0</CurrentCompilingSettingsIndex>
+  <CompilingSettingsList>
+    <CompilingSettings xsi:type="SanScriptCompilingSettings">
+      <ConfigurationName>Release</ConfigurationName>
+      <CompilerExecutable>$(script)\RageMenu\tools\sc.exe</CompilerExecutable>
+      <ResourceExecutable>$(script)\RageMenu\tools\scriptrc_x64.exe</ResourceExecutable>
+      <OutputDirectory>$(script)\RageMenu\build\Release\out</OutputDirectory>
+      <BuildDirectory>$(script)\RageMenu\build\Release\out</BuildDirectory>
+      <PostCompileCommand>$(script)\RageMenu\build\Release\post-compile-release.bat</PostCompileCommand>
+      <IncludeFile>commands.sch</IncludeFile>
+      <IncludePaths>
+        <string>$(script)\RageMenu\src</string>
+      </IncludePaths>
+      <Custom>-final -strictreferencetypechecking -shortcircuit -PlatformName=Win64</Custom>
+      <DebugParser>false</DebugParser>
+      <DumpThreadState>false</DumpThreadState>
+      <DisplayDisassembly>false</DisplayDisassembly>
+      <HsmEnabled>false</HsmEnabled>
+      <OutputDependencyFile>false</OutputDependencyFile>
+      <OutputNativeFile>false</OutputNativeFile>
+      <WarningsAsErrors>false</WarningsAsErrors>
+      <Globals />
+      <DependencyFile>%~n1.d</DependencyFile>
+      <NativeFile>%~n1.native.txt</NativeFile>
+    </CompilingSettings>
+  </CompilingSettingsList>
+  <ProjectExplorerItems>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+      <Name>$(script)\RageMenu\src\ragemenu.sc</Name>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+      <Name>$(script)\RageMenu\src\commands.sch</Name>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+      <Name>$(script)\RageMenu\src\menu.sch</Name>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+      <Name>$(script)\RageMenu\src\math.sch</Name>
+    </ProjectExplorerItem>
+  </ProjectExplorerItems>
+</ProjectEditorSettingsVer3_0>

@@ -1,0 +1,7 @@
+.vs
+*.bak
+*.settings
+*.scolist
+*.exe
+/*.bat
+build/release/out/*
