@@ -12,20 +12,20 @@
       <Platform>Win64</Platform>
     </Platforms>
   </PlatformSettings>
-  <OriginalFilename>$(script)\RageMenu\RageMenu.scproj</OriginalFilename>
+  <OriginalFilename>RageMenu.scproj</OriginalFilename>
   <Language>SanScript</Language>
   <CurrentCompilingSettingsIndex>0</CurrentCompilingSettingsIndex>
   <CompilingSettingsList>
     <CompilingSettings xsi:type="SanScriptCompilingSettings">
       <ConfigurationName>Release</ConfigurationName>
-      <CompilerExecutable>$(script)\RageMenu\tools\sc.exe</CompilerExecutable>
-      <ResourceExecutable>$(script)\RageMenu\tools\scriptrc_x64.exe</ResourceExecutable>
-      <OutputDirectory>$(script)\RageMenu\build\Release\out</OutputDirectory>
-      <BuildDirectory>$(script)\RageMenu\build\Release\out</BuildDirectory>
-      <PostCompileCommand>$(script)\RageMenu\build\Release\post-compile-release.bat</PostCompileCommand>
+      <CompilerExecutable>tools\sc.exe</CompilerExecutable>
+      <ResourceExecutable>tools\scriptrc_x64.exe</ResourceExecutable>
+      <OutputDirectory>build\Release\out</OutputDirectory>
+      <BuildDirectory>build\Release\out</BuildDirectory>
+      <PostCompileCommand>build\Release\post-compile-release.bat</PostCompileCommand>
       <IncludeFile>commands.sch</IncludeFile>
       <IncludePaths>
-        <string>$(script)\RageMenu\src</string>
+        <string>src</string>
       </IncludePaths>
       <Custom>-final -strictreferencetypechecking -shortcircuit -PlatformName=Win64</Custom>
       <DebugParser>false</DebugParser>
@@ -42,16 +42,16 @@
   </CompilingSettingsList>
   <ProjectExplorerItems>
     <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>$(script)\RageMenu\src\ragemenu.sc</Name>
+      <Name>src\ragemenu.sc</Name>
     </ProjectExplorerItem>
     <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>$(script)\RageMenu\src\commands.sch</Name>
+      <Name>src\commands.sch</Name>
     </ProjectExplorerItem>
     <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>$(script)\RageMenu\src\menu.sch</Name>
+      <Name>src\menu.sch</Name>
     </ProjectExplorerItem>
     <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>$(script)\RageMenu\src\math.sch</Name>
+      <Name>src\math.sch</Name>
     </ProjectExplorerItem>
   </ProjectExplorerItems>
 </ProjectEditorSettingsVer3_0>
