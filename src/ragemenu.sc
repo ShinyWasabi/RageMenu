@@ -1,60 +1,31 @@
-USING "menu.sch"
+USING "core_globals.sch"
+USING "submenus_main.sch"
+USING "features_main.sch"
 
-PROC DRAW_SELF_MENU()
-    IF MENU_BEGIN_SUBMENU(SELF_MENU)
-        // TO-DO
-    ENDIF
-ENDPROC
+GLOBALS GLOBALS_BLOCK_RAGE_MENU TRUE
 
-PROC DRAW_VEHICLE_MENU()
-    IF MENU_BEGIN_SUBMENU(VEHICLE_MENU)
-        // TO-DO
-    ENDIF
-ENDPROC
+BOOL bGreeted = FALSE
 
-PROC DRAW_WEAPONS_MENU()
-    IF MENU_BEGIN_SUBMENU(WEAPONS_MENU)
-        // TO-DO
-    ENDIF
-ENDPROC
-
-PROC DRAW_TELEPORT_MENU()
-    IF MENU_BEGIN_SUBMENU(TELEPORT_MENU)
-        // TO-DO
-    ENDIF
-ENDPROC
-
-PROC DRAW_WORLD_MENU()
-    IF MENU_BEGIN_SUBMENU(WORLD_MENU)
-        // TO-DO
-    ENDIF
-ENDPROC
-
-PROC DRAW_MENU()
-    IF MENU_BEGIN()
-        IF MENU_BEGIN_SUBMENU(MAIN_MENU)
-            MENU_SUBMENU_BUTTON("Self", SELF_MENU, "Self options.")
-            MENU_SUBMENU_BUTTON("Vehicle", VEHICLE_MENU, "Vehicle options.")
-            MENU_SUBMENU_BUTTON("Weapons", WEAPONS_MENU, "Weapon options.")
-            MENU_SUBMENU_BUTTON("Teleport", TELEPORT_MENU, "Teleport options.")
-            MENU_SUBMENU_BUTTON("World", WORLD_MENU, "World options.")
-        ENDIF
-
-        DRAW_SELF_MENU()
-        DRAW_VEHICLE_MENU()
-        DRAW_WEAPONS_MENU()
-        DRAW_TELEPORT_MENU()
-        DRAW_WORLD_MENU()
-
-        MENU_END()
+PROC GREET()
+    IF NOT GET_IS_LOADING_SCREEN_ACTIVE()
+        BEGIN_TEXT_COMMAND_DISPLAY_HELP("STRING")
+        ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME("RageMenu loaded. Press ~INPUT_FRONTEND_DELETE~ to open the menu.")
+        END_TEXT_COMMAND_DISPLAY_HELP(0, FALSE, FALSE, 10000)
+        bGreeted = TRUE
     ENDIF
 ENDPROC
 
 SCRIPT
     MENU_INITIALIZE()
 
+    WHILE NOT bGreeted
+        GREET()
+        WAIT(0)
+	ENDWHILE
+
     WHILE TRUE
-        DRAW_MENU()
+        SUBMENUS_DRAW_MAIN()
+        FEATURES_RUN_MAIN()
         WAIT(0)
     ENDWHILE
 ENDSCRIPT

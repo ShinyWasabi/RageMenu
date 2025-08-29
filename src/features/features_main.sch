@@ -1,0 +1,57 @@
+USING "core_globals.sch"
+USING "features_self.sch"
+USING "features_vehicle.sch"
+
+PROC FEATURES_RUN_SELF()
+    IF g_sFeatures.sSelfFeatures.bGodMode
+        FEATURES_SELF_GODMODE(TRUE)
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bInvisibility
+        FEATURES_SELF_INVISIBILITY(TRUE)
+    ENDIF
+    FEATURES_SELF_NO_CLIP(g_sFeatures.sSelfFeatures.bNoClip)
+    IF g_sFeatures.sSelfFeatures.bNoRagdoll
+        FEATURES_SELF_NO_RAGDOLL(TRUE)
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bFastRun
+        FEATURES_SELF_FAST_RUN(TRUE)
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bFastSwim
+        FEATURES_SELF_FAST_SWIM(TRUE)
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bSuperJump
+        FEATURES_SELF_SUPER_JUMP()
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bUnlimitedOxygen
+        FEATURES_SELF_UNLIMITED_OXYGEN(TRUE)
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bUnlimitedAbility
+        FEATURES_SELF_UNLIMITED_ABILITY()
+    ENDIF
+    IF g_sFeatures.sSelfFeatures.bNeverWanted
+        FEATURES_SELF_NEVER_WANTED(TRUE)
+    ENDIF
+ENDPROC
+
+PROC FEATURES_RUN_VEHICLE()
+    IF g_sFeatures.sVehicleFeatures.bGodMode
+        FEATURES_VEHICLE_GODMODE(TRUE)
+    ENDIF
+    IF g_sFeatures.sVehicleFeatures.bSeatbelt
+        FEATURES_VEHICLE_SEATBELT(TRUE)
+    ENDIF
+    IF g_sFeatures.sVehicleFeatures.bAlwaysRepaired
+        FEATURES_VEHICLE_REPAIR()
+    ENDIF
+    IF g_sFeatures.sVehicleFeatures.bHornBoost
+        FEATURES_VEHICLE_HORN_BOOST()
+    ENDIF
+    IF g_sFeatures.sVehicleFeatures.bSpeedoMeter
+        FEATURES_VEHICLE_SPEEDO_METER()
+    ENDIF
+ENDPROC
+
+PROC FEATURES_RUN_MAIN()
+    FEATURES_RUN_SELF()
+    FEATURES_RUN_VEHICLE()
+ENDPROC

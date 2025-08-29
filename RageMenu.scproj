@@ -23,8 +23,12 @@
       <OutputDirectory>build\Release\out</OutputDirectory>
       <BuildDirectory>build\Release\out</BuildDirectory>
       <PostCompileCommand>build\Release\post-compile-release.bat</PostCompileCommand>
-      <IncludeFile>commands.sch</IncludeFile>
+      <IncludeFile>core_commands.sch</IncludeFile>
       <IncludePaths>
+        <string>src\core</string>
+        <string>src\features</string>
+        <string>src\submenus</string>
+        <string>src\util</string>
         <string>src</string>
       </IncludePaths>
       <Custom>-final -strictreferencetypechecking -shortcircuit -PlatformName=Win64</Custom>
@@ -41,17 +45,91 @@
     </CompilingSettings>
   </CompilingSettingsList>
   <ProjectExplorerItems>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFolder">
+      <Name>core</Name>
+      <Items>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\core\core_commands.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\core\core_globals.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\core\core_math.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\core\core_menu.sch</Name>
+        </ProjectExplorerItem>
+      </Items>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFolder">
+      <Name>features</Name>
+      <Items>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_main.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_self.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_teleport.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_vehicle.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_weapons.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\features\features_world.sch</Name>
+        </ProjectExplorerItem>
+      </Items>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFolder">
+      <Name>submenus</Name>
+      <Items>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_main.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_self.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_teleport.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_vehicle.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_weapons.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_world.sch</Name>
+        </ProjectExplorerItem>
+      </Items>
+    </ProjectExplorerItem>
+    <ProjectExplorerItem xsi:type="ProjectExplorerFolder">
+      <Name>util</Name>
+      <Items>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\util\util_self.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\util\util_teleport.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\util\util_vehicle.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\util\util_weapons.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\util\util_world.sch</Name>
+        </ProjectExplorerItem>
+      </Items>
+    </ProjectExplorerItem>
     <ProjectExplorerItem xsi:type="ProjectExplorerFile">
       <Name>src\ragemenu.sc</Name>
-    </ProjectExplorerItem>
-    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>src\commands.sch</Name>
-    </ProjectExplorerItem>
-    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>src\menu.sch</Name>
-    </ProjectExplorerItem>
-    <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-      <Name>src\math.sch</Name>
     </ProjectExplorerItem>
   </ProjectExplorerItems>
 </ProjectEditorSettingsVer3_0>

@@ -82,7 +82,15 @@ ENDFUNC
 FUNC STRING PICK_STRING(BOOL bVal, STRING sTrue, STRING sFalse)
     IF bVal
         RETURN sTrue
-    ELSE
-        RETURN sFalse
     ENDIF
+	
+    RETURN sFalse
+ENDFUNC
+
+FUNC BOOL IS_VECTOR_ZERO(VECTOR vVector)
+    IF vVector.x = 0.0 AND vVector.y = 0.0 AND vVector.z = 0.0
+        RETURN TRUE
+    ENDIF
+    
+    RETURN FALSE
 ENDFUNC
