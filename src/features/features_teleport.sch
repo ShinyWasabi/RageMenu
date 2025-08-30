@@ -20,6 +20,10 @@ PROC FEATURES_TELEPORT_TELEPORT_TO_OBJECTIVE()
     eObjectiveSprites[2] = RADAR_OBJECTIVE_RED
     eObjectiveSprites[3] = RADAR_OBJECTIVE_YELLOW
 	
+    // For unreferenced variable compiler warning.
+    IF eObjectiveSprites[0] = RADAR_OBJECTIVE_BLUE
+    ENDIF
+	
     VECTOR vLocation
     BLIP_SPRITE eSprite
     REPEAT COUNT_OF(eObjectiveSprites) eSprite
