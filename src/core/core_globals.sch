@@ -22,25 +22,33 @@ STRUCT FEATURES_VEHICLE
     BOOL bHornBoost
     BOOL bSpeedoMeter
 ENDSTRUCT
-/*
-STRUCT FEATURES_WEAPONS
 
+STRUCT FEATURES_WEAPONS
+    BOOL bInfiniteAmmo
+    BOOL bInfiniteClip
+    BOOL bExplosiveAmmo
+    BOOL bExplosiveMelee
+    BOOL bFireAmmo
 ENDSTRUCT
 
 STRUCT FEATURES_TELEPORT
-
+    BOOL bAutoTpToWaypoint
 ENDSTRUCT
 
 STRUCT FEATURES_WORLD
-
+    BOOL bBlackout
+    BOOL bNightVision
+    BOOL bThermalVision
+    BOOL bRiotMode
+    BOOL bPauseTime
 ENDSTRUCT
-*/
+
 STRUCT FEATURES
     FEATURES_SELF sSelfFeatures
     FEATURES_VEHICLE sVehicleFeatures
-    //FEATURES_WEAPONS sWeaponsFeatures
-    //FEATURES_TELEPORT sTeleportFeatures
-    //FEATURES_WORLD sWorldFeatures
+    FEATURES_WEAPONS sWeaponsFeatures
+    FEATURES_TELEPORT sTeleportFeatures
+    FEATURES_WORLD sWorldFeatures
 ENDSTRUCT
 
 FEATURES g_sFeatures

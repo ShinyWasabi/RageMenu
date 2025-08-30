@@ -25,7 +25,7 @@ PROC SUBMENUS_DRAW_VEHICLE_SPAWN()
             TEXT_LABEL tlLabel = "VEH_CLASS_"
             tlLabel += iIndex
             STRING sClassName = GET_FILENAME_FOR_AUDIO_CONVERSATION(tlLabel)
-            IF MENU_SUBMENU_BUTTON(sClassName, SUBMENUS_VEHICLE_CLASS)
+            IF MENU_SUBMENU_BUTTON(sClassName, SUBMENUS_VEHICLE_CLASS, "Filter the spawn list by vehicle class.")
                 eSelectedVehicleClass = INT_TO_ENUM(VEHICLE_CLASS, iIndex)
             ENDIF
         ENDREPEAT
@@ -36,20 +36,20 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_VEHICLE()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE)
-        MENU_SUBMENU_BUTTON("Spawn", SUBMENUS_VEHICLE_SPAWN, "Spawn Vehicle.")
+        MENU_SUBMENU_BUTTON("Spawn", SUBMENUS_VEHICLE_SPAWN, "Open vehicle spawn menu.")
         IF MENU_BUTTON("Repair", "Repair any damage to the vehicle.", g_sFeatures.sVehicleFeatures.bAlwaysRepaired)
             FEATURES_VEHICLE_REPAIR()
         ENDIF
-        IF MENU_BUTTON("Max Mods", "Max out vehicle mods.")
+        IF MENU_BUTTON("Max Mods", "Upgrade all vehicle modifications to the maximum level.")
             FEATURES_VEHICLE_MAX_MODS(UTIL_VEHICLE_GET_CURRENT())
         ENDIF
         IF MENU_BUTTON("Teleport into PV", "Teleport into your personal vehicle.")
             FEATURES_VEHICLE_TELEPORT(UTIL_VEHICLE_GET_CURRENT_PV())
         ENDIF
-        IF MENU_BUTTON("Bring PV", "Bring your personal vehicle to your position.")
+        IF MENU_BUTTON("Bring PV", "Bring your personal vehicle to your current location.")
             FEATURES_VEHICLE_BRING(UTIL_VEHICLE_GET_CURRENT_PV())
         ENDIF
-        IF MENU_CHECKBOX("Godmode", g_sFeatures.sVehicleFeatures.bGodmode, "Block all incoming damage to the vehicle.")
+        IF MENU_CHECKBOX("Godmode", g_sFeatures.sVehicleFeatures.bGodmode, "Make the vehicle invincible.")
             IF NOT g_sFeatures.sVehicleFeatures.bGodmode
                 FEATURES_VEHICLE_GODMODE(FALSE)
             ENDIF
@@ -60,8 +60,8 @@ PROC SUBMENUS_DRAW_VEHICLE()
             ENDIF
         ENDIF
         MENU_CHECKBOX("Always Repaired", g_sFeatures.sVehicleFeatures.bAlwaysRepaired, "Keep the vehicle repaired.")
-        MENU_CHECKBOX("Horn Boost", g_sFeatures.sVehicleFeatures.bHornBoost, "Boost the vehicle speed when the horn is held.")
-        MENU_CHECKBOX("Speedo Meter", g_sFeatures.sVehicleFeatures.bSpeedoMeter, "Display a speedometer on the screen.")
+        MENU_CHECKBOX("Horn Boost", g_sFeatures.sVehicleFeatures.bHornBoost, "Hold the horn to boost the vehicle's speed.")
+        MENU_CHECKBOX("Speedo Meter", g_sFeatures.sVehicleFeatures.bSpeedoMeter, "Show a speedometer on the screen.")
     ENDIF
 	
     SUBMENUS_DRAW_VEHICLE_SPAWN()

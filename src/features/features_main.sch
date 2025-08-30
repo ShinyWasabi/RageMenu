@@ -1,6 +1,9 @@
 USING "core_globals.sch"
 USING "features_self.sch"
 USING "features_vehicle.sch"
+USING "features_weapons.sch"
+USING "features_teleport.sch"
+USING "features_world.sch"
 
 PROC FEATURES_RUN_SELF()
     IF g_sFeatures.sSelfFeatures.bGodMode
@@ -51,7 +54,52 @@ PROC FEATURES_RUN_VEHICLE()
     ENDIF
 ENDPROC
 
+PROC FEATURES_RUN_WEAPONS()
+    IF g_sFeatures.sWeaponsFeatures.bInfiniteAmmo
+        FEATURES_WEAPONS_INFINITE_AMMO(TRUE)
+    ENDIF
+    IF g_sFeatures.sWeaponsFeatures.bInfiniteClip
+        FEATURES_WEAPONS_INFINITE_CLIP(TRUE)
+    ENDIF
+    IF g_sFeatures.sWeaponsFeatures.bExplosiveAmmo
+        FEATURES_WEAPONS_EXPLOSIVE_AMMO()
+    ENDIF
+    IF g_sFeatures.sWeaponsFeatures.bExplosiveMelee
+        FEATURES_WEAPONS_EXPLOSIVE_MELEE()
+    ENDIF
+    IF g_sFeatures.sWeaponsFeatures.bFireAmmo
+        FEATURES_WEAPONS_FIRE_AMMO()
+    ENDIF
+ENDPROC
+
+PROC FEATURES_RUN_TELEPORT()
+    IF g_sFeatures.sTeleportFeatures.bAutoTpToWaypoint
+        FEATURES_TELEPORT_TELEPORT_TO_WAYPOINT()
+    ENDIF
+ENDPROC
+
+PROC FEATURES_RUN_WORLD()
+    IF g_sFeatures.sWorldFeatures.bBlackout
+        FEATURES_WORLD_BLACKOUT(TRUE)
+    ENDIF
+    IF g_sFeatures.sWorldFeatures.bNightVision
+        FEATURES_WORLD_NIGHT_VISION(TRUE)
+    ENDIF
+    IF g_sFeatures.sWorldFeatures.bThermalVision
+        FEATURES_WORLD_THERMAL_VISION(TRUE)
+    ENDIF
+    IF g_sFeatures.sWorldFeatures.bRiotMode
+        FEATURES_WORLD_RIOT_MODE(TRUE)
+    ENDIF
+    IF g_sFeatures.sWorldFeatures.bPauseTime
+        FEATURES_WORLD_PAUSE_TIME(TRUE)
+    ENDIF
+ENDPROC
+
 PROC FEATURES_RUN_MAIN()
     FEATURES_RUN_SELF()
     FEATURES_RUN_VEHICLE()
+    FEATURES_RUN_WEAPONS()
+    FEATURES_RUN_TELEPORT()
+    FEATURES_RUN_WORLD()
 ENDPROC

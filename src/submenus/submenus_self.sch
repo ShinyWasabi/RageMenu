@@ -8,10 +8,10 @@ PROC SUBMENUS_DRAW_SELF_WANTED_LEVEL()
             FEATURES_SELF_SET_WANTED_LEVEL(0)
         ENDIF
         INT iWantedLevel = GET_PLAYER_WANTED_LEVEL(PLAYER_ID())
-        IF MENU_SLIDER_INTEGER("Wanted Level", iWantedLevel, 0, 5, "Set your wanted level.", g_sFeatures.sSelfFeatures.bNeverWanted)
+        IF MENU_SLIDER_INTEGER("Wanted Level", iWantedLevel, 0, 5, "Set your wanted level from 0 to 5.", g_sFeatures.sSelfFeatures.bNeverWanted)
             FEATURES_SELF_SET_WANTED_LEVEL(iWantedLevel)
         ENDIF
-        IF MENU_CHECKBOX("Never Wanted", g_sFeatures.sSelfFeatures.bNeverWanted, "Never gain a wanted level.")
+        IF MENU_CHECKBOX("Never Wanted", g_sFeatures.sSelfFeatures.bNeverWanted, "Prevent your wanted level from ever increasing.")
             IF NOT g_sFeatures.sSelfFeatures.bNeverWanted
                 FEATURES_SELF_NEVER_WANTED(FALSE)
             ENDIF
@@ -21,37 +21,37 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_SELF()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_SELF)
-        MENU_SUBMENU_BUTTON("Wanted Level", SUBMENUS_SELF_WANTED_LEVEL, "Wanted level options.")
-        IF MENU_BUTTON("Heal", "Restores your health and armour.")
+        MENU_SUBMENU_BUTTON("Wanted Level", SUBMENUS_SELF_WANTED_LEVEL, "Options to control your wanted level.")
+        IF MENU_BUTTON("Heal", "Restore your health and armor to full.")
             FEATURES_SELF_HEAL()
         ENDIF
-        IF MENU_BUTTON("Suicide", "Kills you.")
+        IF MENU_BUTTON("Suicide", "Kill your character.")
             FEATURES_SELF_SUICIDE()
         ENDIF
-        IF MENU_BUTTON("Clear", "Clears all the dirt and blood on you.")
+        IF MENU_BUTTON("Clear", "Remove all blood, dirt, and damage from your character.")
             FEATURES_SELF_CLEAR()
         ENDIF
-        IF MENU_BUTTON("Skip Cutscene", "Skips any currently playing cutscene.")
+        IF MENU_BUTTON("Skip Cutscene", "Skip any cutscene that is currently playing.")
             FEATURES_SELF_SKIP_CUTSCENE()
         ENDIF
-        IF MENU_BUTTON("Remove Black Screen", "Remove black screen.")
+        IF MENU_BUTTON("Remove Black Screen", "Remove any black screen.")
             FEATURES_SELF_REMOVE_BLACK_SCREEN()
         ENDIF
-        IF MENU_BUTTON("Refresh Interior", "Refresh the current interior you are inside.")
+        IF MENU_BUTTON("Refresh Interior", "Refresh the interior you are currently inside.")
             FEATURES_SELF_REFRESH_INTERIOR()
         ENDIF
-        IF MENU_CHECKBOX("Godmode", g_sFeatures.sSelfFeatures.bGodMode, "Blocks all incoming damage.")
+        IF MENU_CHECKBOX("Godmode", g_sFeatures.sSelfFeatures.bGodMode, "Become invincible.")
             IF NOT g_sFeatures.sSelfFeatures.bGodMode
                 FEATURES_SELF_GODMODE(FALSE)
             ENDIF
         ENDIF
-        IF MENU_CHECKBOX("Invisibility", g_sFeatures.sSelfFeatures.bInvisibility, "Makes you invisible.")
+        IF MENU_CHECKBOX("Invisibility", g_sFeatures.sSelfFeatures.bInvisibility, "Make your character invisible.")
             IF NOT g_sFeatures.sSelfFeatures.bInvisibility
                 FEATURES_SELF_INVISIBILITY(FALSE)
             ENDIF
         ENDIF
-        MENU_CHECKBOX("No Clip", g_sFeatures.sSelfFeatures.bNoClip, "Fly through the map.")
-        IF MENU_CHECKBOX("No Ragdoll", g_sFeatures.sSelfFeatures.bNoRagdoll, "Prevents you from ragdolling.")
+        MENU_CHECKBOX("No Clip", g_sFeatures.sSelfFeatures.bNoClip, "Fly or move through objects freely without collision.")
+        IF MENU_CHECKBOX("No Ragdoll", g_sFeatures.sSelfFeatures.bNoRagdoll, "Prevent your character from being knocked down or ragdolling.")
             IF NOT g_sFeatures.sSelfFeatures.bNoRagdoll
                 FEATURES_SELF_NO_RAGDOLL(FALSE)
             ENDIF
@@ -67,7 +67,7 @@ PROC SUBMENUS_DRAW_SELF()
             ENDIF
         ENDIF
         MENU_CHECKBOX("Super Jump", g_sFeatures.sSelfFeatures.bSuperJump, "Jump higher than normal.")
-        IF MENU_CHECKBOX("Unlimited Oxygen", g_sFeatures.sSelfFeatures.bUnlimitedOxygen, "Stay underwater without losing oxygen.")
+        IF MENU_CHECKBOX("Unlimited Oxygen", g_sFeatures.sSelfFeatures.bUnlimitedOxygen, "Stay underwater indefinitely without losing oxygen.")
             IF NOT g_sFeatures.sSelfFeatures.bUnlimitedOxygen
                 FEATURES_SELF_UNLIMITED_OXYGEN(FALSE)
             ENDIF

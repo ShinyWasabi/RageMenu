@@ -2,7 +2,7 @@ USING "core_math.sch"
 
 CONST_INT MAX_VIEW_ITEMS  10
 CONST_INT MAX_SUBMENUS    20
-CONST_INT MAX_TEXT_LENGHT 20
+//CONST_INT MAX_TEXT_LENGHT 25
 
 ENUM SUBMENUS
     SUBMENUS_MAIN,
@@ -12,8 +12,14 @@ ENUM SUBMENUS
     SUBMENUS_VEHICLE_SPAWN,
     SUBMENUS_VEHICLE_CLASS,
     SUBMENUS_WEAPONS,
+    SUBMENUS_WEAPONS_AMMUNATION,
     SUBMENUS_TELEPORT,
-    SUBMENUS_WORLD
+    SUBMENUS_TELEPORT_CUSTOM_TELEPORT,
+    SUBMENUS_WORLD,
+    SUBMENUS_WORLD_WEATHER,
+    SUBMENUS_WORLD_TIME,
+    SUBMENUS_WORLD_IPL,
+    SUBMENUS_WORLD_CUSTOM_IPL
 ENDENUM
 
 STRUCT MENU_COLOURS
@@ -148,10 +154,11 @@ FUNC BOOL MENU_IS_CLICKED(BOOL bDisabled = FALSE)
     IF MENU_IS_FOCUSED() AND sMenuData.bClicked
         IF bDisabled
             PLAY_SOUND_FRONTEND(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN FALSE
         ELSE
             PLAY_SOUND_FRONTEND(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN TRUE
         ENDIF
-        RETURN TRUE
     ENDIF
     
     RETURN FALSE
@@ -161,10 +168,11 @@ FUNC BOOL MENU_IS_INCREMENTED(BOOL bDisabled = FALSE)
     IF MENU_IS_FOCUSED() AND sMenuData.bIncremented
         IF bDisabled
             PLAY_SOUND_FRONTEND(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN FALSE
         ELSE
             PLAY_SOUND_FRONTEND(-1, "NAV_LEFT_RIGHT", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN TRUE
         ENDIF
-        RETURN TRUE
     ENDIF
     
     RETURN FALSE
@@ -174,10 +182,11 @@ FUNC BOOL MENU_IS_DECREMENTED(BOOL bDisabled = FALSE)
     IF MENU_IS_FOCUSED() AND sMenuData.bDecremented
         IF bDisabled
             PLAY_SOUND_FRONTEND(-1, "ERROR", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN FALSE
         ELSE
             PLAY_SOUND_FRONTEND(-1, "NAV_LEFT_RIGHT", "HUD_FRONTEND_DEFAULT_SOUNDSET", TRUE)
+            RETURN TRUE
         ENDIF
-        RETURN TRUE
     ENDIF
     
     RETURN FALSE
@@ -185,15 +194,21 @@ ENDFUNC
 
 FUNC STRING MENU_GET_SUBMENU_TITLE(SUBMENUS eSubmenu)
     SWITCH eSubmenu
-        CASE SUBMENUS_MAIN              RETURN "MAIN"
-        CASE SUBMENUS_SELF              RETURN "SELF"
-        CASE SUBMENUS_SELF_WANTED_LEVEL RETURN "WANTED LEVEL"
-        CASE SUBMENUS_VEHICLE           RETURN "VEHICLE"
-        CASE SUBMENUS_VEHICLE_SPAWN     RETURN "SPAWN"
-        CASE SUBMENUS_VEHICLE_CLASS     RETURN "CLASS"
-        CASE SUBMENUS_WEAPONS           RETURN "WEAPONS"
-        CASE SUBMENUS_TELEPORT          RETURN "TELEPORT"
-        CASE SUBMENUS_WORLD             RETURN "WORLD"
+        CASE SUBMENUS_MAIN                     RETURN "MAIN"
+        CASE SUBMENUS_SELF                     RETURN "SELF"
+        CASE SUBMENUS_SELF_WANTED_LEVEL        RETURN "WANTED LEVEL"
+        CASE SUBMENUS_VEHICLE                  RETURN "VEHICLE"
+        CASE SUBMENUS_VEHICLE_SPAWN            RETURN "SPAWN"
+        CASE SUBMENUS_VEHICLE_CLASS            RETURN "CLASS"
+        CASE SUBMENUS_WEAPONS                  RETURN "WEAPONS"
+        CASE SUBMENUS_WEAPONS_AMMUNATION       RETURN "AMMU-NATION"
+        CASE SUBMENUS_TELEPORT                 RETURN "TELEPORT"
+        CASE SUBMENUS_TELEPORT_CUSTOM_TELEPORT RETURN "CUSTOM TELEPORT"
+        CASE SUBMENUS_WORLD                    RETURN "WORLD"
+        CASE SUBMENUS_WORLD_WEATHER            RETURN "WEATHER"
+        CASE SUBMENUS_WORLD_TIME               RETURN "TIME"
+        CASE SUBMENUS_WORLD_IPL                RETURN "IPL"
+        CASE SUBMENUS_WORLD_CUSTOM_IPL         RETURN "CUSTOM IPL"
     ENDSWITCH
     
     RETURN ""
@@ -332,14 +347,14 @@ ENDPROC
 PROC MENU_DRAW_TEXT_STRING(STRING sText, FLOAT fX, FLOAT fY, INT iRed = 255, INT iGreen = 255, INT iBlue = 255, INT iAlpha = 255, BOOL bDrawRight = FALSE)
     BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING")
     
-    TEXT_LABEL_63 sToDraw = sText
+    /*TEXT_LABEL_63 sToDraw = sText
     INT iLength           = GET_LENGTH_OF_LITERAL_STRING(sText)
     IF iLength >= MAX_TEXT_LENGHT
         sToDraw = GET_CHARACTER_FROM_AUDIO_CONVERSATION_FILENAME(sText, 0, MAX_TEXT_LENGHT - 3)
         sToDraw += "..."
-    ENDIF
+    ENDIF*/
     
-    ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(sToDraw)
+    ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(sText)
     
     IF bDrawRight
         SET_TEXT_WRAP(0, fX)
@@ -538,10 +553,8 @@ FUNC BOOL MENU_SUBMENU_BUTTON(STRING sText, SUBMENUS eSubmenu, STRING sTooltip =
 
     MENU_DRAW_OPTION_STRING(sText, ">", sTooltip, bDisabled)
     IF (MENU_IS_CLICKED(bDisabled))
-        IF NOT bDisabled
-            sMenuData.iChangingToMenu = ENUM_TO_INT(eSubmenu)
-            bRetn = TRUE
-        ENDIF
+        sMenuData.iChangingToMenu = ENUM_TO_INT(eSubmenu)
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -553,9 +566,7 @@ FUNC BOOL MENU_BUTTON(STRING sText, STRING sTooltip = NULL, BOOL bDisabled = FAL
 
     MENU_DRAW_OPTION_STRING(sText, DEFAULT, sTooltip, bDisabled)
     IF (MENU_IS_CLICKED(bDisabled))
-        IF NOT bDisabled
-            bRetn = TRUE
-        ENDIF
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -567,10 +578,8 @@ FUNC BOOL MENU_CHECKBOX(STRING sText, BOOL& bChecked, STRING sTooltip = NULL, BO
 
     MENU_DRAW_OPTION_STRING(sText, PICK_STRING(bChecked, "ON", "OFF"), sTooltip, bDisabled)
     IF (MENU_IS_CLICKED(bDisabled))
-        IF NOT bDisabled
-            bChecked = NOT bChecked
-            bRetn = TRUE
-        ENDIF
+        bChecked = NOT bChecked
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -582,21 +591,17 @@ FUNC BOOL MENU_SLIDER_STRING(STRING sText, STRING& sStrings[], INT& iCurrentItem
 
     MENU_DRAW_SLIDER_STRING(sText, sStrings[iCurrentItem], sTooltip, bDisabled)
     IF (MENU_IS_INCREMENTED(bDisabled))
-        IF NOT bDisabled
-            iCurrentItem++
-            IF iCurrentItem > COUNT_OF(sStrings) - 1
-                iCurrentItem = 0
-            ENDIF
-            bRetn = TRUE
+        iCurrentItem++
+        IF iCurrentItem > COUNT_OF(sStrings) - 1
+            iCurrentItem = 0
         ENDIF
+        bRetn = TRUE
     ELIF (MENU_IS_DECREMENTED(bDisabled))
-        IF NOT bDisabled
-            iCurrentItem--
-            IF iCurrentItem < 0
-                iCurrentItem = COUNT_OF(sStrings) - 1
-            ENDIF
-            bRetn = TRUE
+        iCurrentItem--
+        IF iCurrentItem < 0
+            iCurrentItem = COUNT_OF(sStrings) - 1
         ENDIF
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -608,21 +613,17 @@ FUNC BOOL MENU_SLIDER_INTEGER(STRING sText, INT& iValue, INT iMin, INT iMax, STR
 
     MENU_DRAW_SLIDER_INTEGER(sText, iValue, sTooltip, bDisabled)
     IF (MENU_IS_INCREMENTED(bDisabled))
-        IF NOT bDisabled
-            iValue++
-            IF iValue > iMax
-                iValue = iMin
-            ENDIF
-            bRetn = TRUE
+        iValue++
+        IF iValue > iMax
+            iValue = iMin
         ENDIF
+        bRetn = TRUE
     ELIF (MENU_IS_DECREMENTED(bDisabled))
-        IF NOT bDisabled
-            iValue--
-            IF iValue < iMin
-                iValue = iMax
-            ENDIF
-            bRetn = TRUE
+        iValue--
+        IF iValue < iMin
+            iValue = iMax
         ENDIF
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -634,21 +635,17 @@ FUNC BOOL MENU_SLIDER_FLOAT(STRING sText, FLOAT& fValue, FLOAT fMin, FLOAT fMax,
 
     MENU_DRAW_SLIDER_FLOAT(sText, fValue, sTooltip, bDisabled)
     IF (MENU_IS_INCREMENTED(bDisabled))
-        IF NOT bDisabled
-            fValue++
-            IF fValue > fMax
-                fValue = fMin
-            ENDIF
-            bRetn = TRUE
+        fValue++
+        IF fValue > fMax
+            fValue = fMin
         ENDIF
+        bRetn = TRUE
     ELIF (MENU_IS_DECREMENTED(bDisabled))
-        IF NOT bDisabled
-            fValue--
-            IF fValue < fMin
-                fValue = fMax
-            ENDIF
-            bRetn = TRUE
+        fValue--
+        IF fValue < fMin
+            fValue = fMax
         ENDIF
+        bRetn = TRUE
     ENDIF
 
     sMenuData.iCurPosDef++
@@ -660,17 +657,15 @@ FUNC BOOL MENU_KEYBOARD_STRING(STRING sText, TEXT_LABEL_63& tlString, STRING sTo
 
     MENU_DRAW_OPTION_STRING(sText, tlString, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
-        IF NOT bDisabled
-            KEYBOARD_STATUS eStatus = EDITING
-            DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
-            WHILE eStatus = EDITING
-                eStatus = UPDATE_ONSCREEN_KEYBOARD()
-                WAIT(0)
-            ENDWHILE
-            IF eStatus = FINISHED
-                tlString = GET_ONSCREEN_KEYBOARD_RESULT()
-                bRetn = TRUE
-            ENDIF
+        KEYBOARD_STATUS eStatus = EDITING
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        WHILE eStatus = EDITING
+            eStatus = UPDATE_ONSCREEN_KEYBOARD()
+            WAIT(0)
+        ENDWHILE
+        IF eStatus = FINISHED
+            tlString = GET_ONSCREEN_KEYBOARD_RESULT()
+            bRetn = TRUE
         ENDIF
     ENDIF
 
@@ -683,20 +678,18 @@ FUNC BOOL MENU_KEYBOARD_INTEGER(STRING sText, INT& iValue, STRING sTooltip = NUL
 
     MENU_DRAW_OPTION_INTEGER(sText, iValue, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
-        IF NOT bDisabled
-            KEYBOARD_STATUS eStatus = EDITING
-            DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
-            WHILE eStatus = EDITING
-                eStatus = UPDATE_ONSCREEN_KEYBOARD()
-                WAIT(0)
-            ENDWHILE
-            IF eStatus = FINISHED
-                INT iTemp
-                STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
-                IF STRING_TO_INT(sResult, iTemp)
-                    iValue = CLAMP_INTEGER(iTemp, iMin, iMax)
-                    bRetn = TRUE
-                ENDIF
+        KEYBOARD_STATUS eStatus = EDITING
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        WHILE eStatus = EDITING
+            eStatus = UPDATE_ONSCREEN_KEYBOARD()
+            WAIT(0)
+        ENDWHILE
+        IF eStatus = FINISHED
+            INT iTemp
+            STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
+            IF STRING_TO_INT(sResult, iTemp)
+                iValue = CLAMP_INTEGER(iTemp, iMin, iMax)
+                bRetn = TRUE
             ENDIF
         ENDIF
     ENDIF
@@ -710,20 +703,18 @@ FUNC BOOL MENU_KEYBOARD_FLOAT(STRING sText, FLOAT& fValue, STRING sTooltip = NUL
 
     MENU_DRAW_OPTION_FLOAT(sText, fValue, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
-        IF NOT bDisabled
-            KEYBOARD_STATUS eStatus = EDITING
-            DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
-            WHILE eStatus = EDITING
-                eStatus = UPDATE_ONSCREEN_KEYBOARD()
-                WAIT(0)
-            ENDWHILE
-            IF eStatus = FINISHED
-                FLOAT fTemp
-                STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
-                IF STRING_TO_FLOAT(sResult, fTemp)
-                    fValue = CLAMP_FLOAT(fTemp, fMin, fMax)
-                    bRetn = TRUE
-                ENDIF
+        KEYBOARD_STATUS eStatus = EDITING
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        WHILE eStatus = EDITING
+            eStatus = UPDATE_ONSCREEN_KEYBOARD()
+            WAIT(0)
+        ENDWHILE
+        IF eStatus = FINISHED
+            FLOAT fTemp
+            STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
+            IF STRING_TO_FLOAT(sResult, fTemp)
+                fValue = CLAMP_FLOAT(fTemp, fMin, fMax)
+                bRetn = TRUE
             ENDIF
         ENDIF
     ENDIF
