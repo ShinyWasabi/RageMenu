@@ -43,8 +43,9 @@ PROC SUBMENUS_DRAW_VEHICLE()
         IF MENU_BUTTON("Max Mods", "Upgrade all vehicle modifications to the maximum level.")
             FEATURES_VEHICLE_MAX_MODS(UTIL_VEHICLE_GET_CURRENT())
         ENDIF
+        // These two don't work if we're too far away from the vehicle as it's not loaded. I'll see if there's a way to force request it.
         IF MENU_BUTTON("Teleport into PV", "Teleport into your personal vehicle.")
-            FEATURES_VEHICLE_TELEPORT(UTIL_VEHICLE_GET_CURRENT_PV())
+            FEATURES_VEHICLE_TELEPORT_INTO_PV()
         ENDIF
         IF MENU_BUTTON("Bring PV", "Bring your personal vehicle to your current location.")
             FEATURES_VEHICLE_BRING(UTIL_VEHICLE_GET_CURRENT_PV())
