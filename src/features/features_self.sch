@@ -104,7 +104,7 @@ PROC FEATURES_SELF_NO_CLIP(BOOL bShouldRun)
         vCamRot.x = 0
         SET_ENTITY_ROTATION(eNoClipEntity, vCamRot, 2, TRUE)
 
-        IF IS_VECTOR_ZERO(vVel)
+        IF MATH_IS_VECTOR_ZERO(vVel)
             FREEZE_ENTITY_POSITION(eNoClipEntity, TRUE)
             sNoClipData.fCurrentSpeedMult = 0.0
         ELSE

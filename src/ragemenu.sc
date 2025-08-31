@@ -35,12 +35,15 @@ PROC CLEANUP()
     FEATURES_WORLD_PAUSE_TIME(FALSE)
 	
     MENU_SCALEFORM_DELETE()
+    UTIL_WORLD_ENABLE_SNOW(FALSE)
 	
     TERMINATE_THIS_THREAD() // This only sets the thread state to KILLED, it doesn't release the script program. So we'll still have to call KillGtaThread from SCOL after calling CLEANUP.
 ENDPROC
 
 SCRIPT
     MENU_INITIALIZE()
+    fpCleanupFunc = &CLEANUP
+
 
     WHILE NOT bGreeted
         GREET()

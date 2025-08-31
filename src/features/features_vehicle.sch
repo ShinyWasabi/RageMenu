@@ -148,6 +148,10 @@ PROC FEATURES_VEHICLE_SPEEDO_METER()
 ENDPROC
 
 PROC VEHICLE_SPAWN_VEHICLE(INT iVehicleModel)
+    IF NOT IS_MODEL_IN_CDIMAGE(iVehicleModel)
+        EXIT
+    ENDIF
+
     INT iLoadCounter = 0
     WHILE NOT HAS_MODEL_LOADED(iVehicleModel)
         REQUEST_MODEL(iVehicleModel)

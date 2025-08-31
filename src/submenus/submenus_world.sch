@@ -88,7 +88,7 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_WORLD_IPL_CUSTOM_IPL()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_WORLD_CUSTOM_IPL)
-        MENU_KEYBOARD_STRING("IPL Name:", tlCustomIPLName, "Enter IPL name.")
+        MENU_KEYBOARD_STRING("IPL Name", tlCustomIPLName, "Enter IPL name.")
         IF MENU_BUTTON("Load IPL", "Load a specific IPL by name.")
             WORLD_LOAD_IPL(tlCustomIPLName, TRUE)
         ENDIF

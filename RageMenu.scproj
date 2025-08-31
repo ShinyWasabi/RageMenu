@@ -89,6 +89,9 @@
       <Name>submenus</Name>
       <Items>
         <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\submenus\submenus_debug.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
           <Name>src\submenus\submenus_main.sch</Name>
         </ProjectExplorerItem>
         <ProjectExplorerItem xsi:type="ProjectExplorerFile">
@@ -111,9 +114,6 @@
     <ProjectExplorerItem xsi:type="ProjectExplorerFolder">
       <Name>util</Name>
       <Items>
-        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
-          <Name>src\util\util_self.sch</Name>
-        </ProjectExplorerItem>
         <ProjectExplorerItem xsi:type="ProjectExplorerFile">
           <Name>src\util\util_teleport.sch</Name>
         </ProjectExplorerItem>

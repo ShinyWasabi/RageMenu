@@ -3,6 +3,7 @@ USING "core_globals.sch"
 USING "features_vehicle.sch"
 
 VEHICLE_CLASS eSelectedVehicleClass = VC_COMPACT
+TEXT_LABEL_63 tlModelName = ""
 
 PROC SUBMENUS_DRAW_VEHICLE_CLASS()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_CLASS)
@@ -20,6 +21,11 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_VEHICLE_SPAWN()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_SPAWN)
+        MENU_KEYBOARD_STRING("Model Name", tlModelName, "Enter vehicle model name.")
+        IF MENU_BUTTON("Spawn Vehicle", "Spawn vehicle by model name.")
+            VEHICLE_SPAWN_VEHICLE(GET_HASH_KEY(tlModelName))
+        ENDIF
+	
         INT iIndex = 0
         REPEAT COUNT_OF(VEHICLE_CLASS) iIndex
             TEXT_LABEL tlLabel = "VEH_CLASS_"

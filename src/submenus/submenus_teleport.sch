@@ -6,9 +6,9 @@ VECTOR vCustomTpCoords = <<0.0, 0.0, 0.0>>
 
 PROC SUBMENUS_DRAW_TELEPORT_CUSTOM_TELEPORT()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_TELEPORT_CUSTOM_TELEPORT)
-        MENU_KEYBOARD_FLOAT("X Axis:", vCustomTpCoords.x, "Enter target X position.")
-        MENU_KEYBOARD_FLOAT("Y Axis:", vCustomTpCoords.y, "Enter target Y position.")
-        MENU_KEYBOARD_FLOAT("Z Axis:", vCustomTpCoords.z, "Enter target Z position.")
+        MENU_KEYBOARD_FLOAT("X Axis", vCustomTpCoords.x, "Enter target X position.")
+        MENU_KEYBOARD_FLOAT("Y Axis", vCustomTpCoords.y, "Enter target Y position.")
+        MENU_KEYBOARD_FLOAT("Z Axis", vCustomTpCoords.z, "Enter target Z position.")
         IF MENU_BUTTON("Teleport to Coords", "Teleport to the entered X, Y, Z coordinates.")
             SET_PED_COORDS_KEEP_VEHICLE(PLAYER_PED_ID(), vCustomTpCoords)
         ENDIF

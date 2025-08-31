@@ -19,7 +19,11 @@ ENUM SUBMENUS
     SUBMENUS_WORLD_WEATHER,
     SUBMENUS_WORLD_TIME,
     SUBMENUS_WORLD_IPL,
-    SUBMENUS_WORLD_CUSTOM_IPL
+    SUBMENUS_WORLD_CUSTOM_IPL,
+    SUBMENUS_DEBUG,
+    SUBMENUS_DEBUG_STAT_EDITOR,
+    SUBMENUS_DEBUG_PACKED_STAT_EDITOR,
+    SUBMENUS_DEBUG_SCRIPT_THREADS
 ENDENUM
 
 STRUCT MENU_COLOURS
@@ -68,6 +72,32 @@ PROC MENU_UPDATE_VIEW()
     ENDIF
 ENDPROC
 
+FUNC BOOL MENU_IS_SAFE_TO_PROCESS()
+    IF IS_PED_RUNNING_MOBILE_PHONE_TASK(PLAYER_PED_ID())
+        RETURN FALSE
+    ENDIF
+    IF GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(HASH("appinternet")) > 0
+        RETURN FALSE
+    ENDIF
+    IF IS_WARNING_MESSAGE_ACTIVE()
+        RETURN FALSE
+    ENDIF
+    IF IS_PLAYER_SWITCH_IN_PROGRESS()
+        RETURN FALSE
+    ENDIF
+    IF NOT IS_CONTROL_ENABLED(FRONTEND_CONTROL, INPUT_FRONTEND_PAUSE_ALTERNATE) // Check if any in-game menu is open (this may have false positives).
+        RETURN FALSE
+    ENDIF
+    IF GET_IS_LOADING_SCREEN_ACTIVE()
+        RETURN FALSE
+    ENDIF
+    IF IS_PAUSE_MENU_ACTIVE()
+        RETURN FALSE
+    ENDIF
+    
+    RETURN TRUE
+ENDFUNC
+
 PROC MENU_HANDLE_INPUT()
     INT iCurTime = GET_GAME_TIMER()
     
@@ -83,22 +113,15 @@ PROC MENU_HANDLE_INPUT()
     BOOL bUpPressed     = IS_DISABLED_CONTROL_PRESSED(PLAYER_CONTROL, INPUT_FRONTEND_UP)
     BOOL bRightPressed  = IS_DISABLED_CONTROL_PRESSED(PLAYER_CONTROL, INPUT_FRONTEND_RIGHT)
     BOOL bLeftPressed   = IS_DISABLED_CONTROL_PRESSED(PLAYER_CONTROL, INPUT_FRONTEND_LEFT)
-    
-    IF GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(HASH("appinternet")) > 0
-        EXIT
-    ENDIF	
-    IF IS_PED_RUNNING_MOBILE_PHONE_TASK(PLAYER_PED_ID())
-        EXIT
-    ENDIF
-    IF IS_WARNING_MESSAGE_ACTIVE()
+	
+    IF NOT MENU_IS_SAFE_TO_PROCESS()
+        IF sMenuData.bIsOpen 
+            sMenuData.bIsOpen = FALSE
+        ENDIF
         EXIT
     ENDIF
-    IF NOT IS_CONTROL_ENABLED(FRONTEND_CONTROL, INPUT_FRONTEND_PAUSE_ALTERNATE) // Check if pi_menu is open (this may have false positives).
-        EXIT
-    ENDIF
-    IF (NOT GET_IS_LOADING_SCREEN_ACTIVE()) AND (NOT IS_PAUSE_MENU_ACTIVE()) AND
-       (NOT bBackPressed) AND (NOT bEnterPressed) AND (NOT bDownPressed) AND (NOT bUpPressed) AND 
-       (NOT bRightPressed) AND (NOT bLeftPressed) AND (NOT bMenuJustOpened)
+	
+    IF (NOT bBackPressed) AND (NOT bEnterPressed) AND (NOT bDownPressed) AND (NOT bUpPressed) AND (NOT bRightPressed) AND (NOT bLeftPressed) AND (NOT bMenuJustOpened)
         EXIT
     ENDIF
     
@@ -223,6 +246,10 @@ FUNC STRING MENU_GET_SUBMENU_TITLE(SUBMENUS eSubmenu)
         CASE SUBMENUS_WORLD_TIME               RETURN "TIME"
         CASE SUBMENUS_WORLD_IPL                RETURN "IPL"
         CASE SUBMENUS_WORLD_CUSTOM_IPL         RETURN "CUSTOM IPL"
+        CASE SUBMENUS_DEBUG                    RETURN "DEBUG"
+        CASE SUBMENUS_DEBUG_STAT_EDITOR        RETURN "STAT EDITOR"
+        CASE SUBMENUS_DEBUG_PACKED_STAT_EDITOR RETURN "PACKED STAT EDITOR"
+        CASE SUBMENUS_DEBUG_SCRIPT_THREADS     RETURN "SCRIPT THREADS"
     ENDSWITCH
     
     RETURN ""
@@ -368,7 +395,7 @@ PROC MENU_DRAW_TOOLTIP()
         EXIT
     ENDIF
 
-    INT iNumLines     = GET_NUM_LINES_TOOLTIP(sMenuData.sToolTipText)
+    INT iNumLines     = MATH_GET_NUM_LINES_TOOLTIP(sMenuData.sToolTipText)
     FLOAT fLineHeight = GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) * 1.1
     FLOAT fRectHeight = fLineHeight * iNumLines + 0.03
     DRAW_RECT(0.8, sMenuData.fYValue + 0.025 + (fRectHeight / 2) - (0.038 / 2), 0.21, fRectHeight, 23, 23, 23, 210, FALSE)
@@ -538,7 +565,7 @@ PROC MENU_DRAW_SLIDER_STRING(STRING sLeft, STRING sRight, STRING sTooltip = NULL
     MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - GET_STRING_WIDTH(sRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_STRING_WIDTH(sRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_STRING(sRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         
@@ -563,7 +590,7 @@ PROC MENU_DRAW_SLIDER_INTEGER(STRING sLeft, INT iRight, STRING sTooltip = NULL, 
     MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - GET_INTEGER_WIDTH(iRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_INTEGER_WIDTH(iRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_INTEGER(iRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
@@ -588,7 +615,7 @@ PROC MENU_DRAW_SLIDER_FLOAT(STRING sLeft, FLOAT fRight, STRING sTooltip = NULL, 
     MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - GET_FLOAT_WIDTH(fRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_FLOAT_WIDTH(fRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         MENU_DRAW_TEXT_FLOAT(fRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
@@ -636,7 +663,7 @@ ENDFUNC
 FUNC BOOL MENU_CHECKBOX(STRING sText, BOOL& bChecked, STRING sTooltip = NULL, BOOL bDisabled = FALSE)
     BOOL bRetn = FALSE
 
-    MENU_DRAW_OPTION_STRING(sText, PICK_STRING(bChecked, "ON", "OFF"), sTooltip, bDisabled)
+    MENU_DRAW_OPTION_STRING(sText, MATH_PICK_STRING(bChecked, "ON", "OFF"), sTooltip, bDisabled)
     IF (MENU_IS_CLICKED(bDisabled))
         bChecked = NOT bChecked
         bRetn = TRUE
@@ -712,13 +739,13 @@ FUNC BOOL MENU_SLIDER_FLOAT(STRING sText, FLOAT& fValue, FLOAT fMin, FLOAT fMax,
     RETURN bRetn
 ENDFUNC
 
-FUNC BOOL MENU_KEYBOARD_STRING(STRING sText, TEXT_LABEL_63& tlString, STRING sTooltip = NULL, BOOL bDisabled = FALSE, INT iLenght = 63) // Can't pass string as reference.
+FUNC BOOL MENU_KEYBOARD_STRING(STRING sText, TEXT_LABEL_63& tlString, STRING sTooltip = NULL, BOOL bDisabled = FALSE, INT iLength = 63) // Can't pass string as reference.
     BOOL bRetn = FALSE
 
     MENU_DRAW_OPTION_STRING(sText, tlString, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
         KEYBOARD_STATUS eStatus = EDITING
-        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLength)
         WHILE eStatus = EDITING
             eStatus = UPDATE_ONSCREEN_KEYBOARD()
             WAIT(0)
@@ -733,13 +760,13 @@ FUNC BOOL MENU_KEYBOARD_STRING(STRING sText, TEXT_LABEL_63& tlString, STRING sTo
     RETURN bRetn
 ENDFUNC
 
-FUNC BOOL MENU_KEYBOARD_INTEGER(STRING sText, INT& iValue, STRING sTooltip = NULL, BOOL bDisabled = FALSE, INT iMin = INT_MIN, INT iMax = INT_MAX, INT iLenght = 63)
+FUNC BOOL MENU_KEYBOARD_INTEGER(STRING sText, INT& iValue, STRING sTooltip = NULL, BOOL bDisabled = FALSE, INT iMin = INT_MIN, INT iMax = INT_MAX, INT iLength = 63)
     BOOL bRetn = FALSE
 
     MENU_DRAW_OPTION_INTEGER(sText, iValue, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
         KEYBOARD_STATUS eStatus = EDITING
-        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLength)
         WHILE eStatus = EDITING
             eStatus = UPDATE_ONSCREEN_KEYBOARD()
             WAIT(0)
@@ -748,7 +775,7 @@ FUNC BOOL MENU_KEYBOARD_INTEGER(STRING sText, INT& iValue, STRING sTooltip = NUL
             INT iTemp
             STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
             IF STRING_TO_INT(sResult, iTemp)
-                iValue = CLAMP_INTEGER(iTemp, iMin, iMax)
+                iValue = MATH_CLAMP_INTEGER(iTemp, iMin, iMax)
                 bRetn = TRUE
             ENDIF
         ENDIF
@@ -758,13 +785,13 @@ FUNC BOOL MENU_KEYBOARD_INTEGER(STRING sText, INT& iValue, STRING sTooltip = NUL
     RETURN bRetn
 ENDFUNC
 
-FUNC BOOL MENU_KEYBOARD_FLOAT(STRING sText, FLOAT& fValue, STRING sTooltip = NULL, BOOL bDisabled = FALSE, FLOAT fMin = FLOAT_MIN, FLOAT fMax = FLOAT_MAX, INT iLenght = 63)
+FUNC BOOL MENU_KEYBOARD_FLOAT(STRING sText, FLOAT& fValue, STRING sTooltip = NULL, BOOL bDisabled = FALSE, FLOAT fMin = FLOAT_MIN, FLOAT fMax = FLOAT_MAX, INT iLength = 63)
     BOOL bRetn = FALSE
 
     MENU_DRAW_OPTION_FLOAT(sText, fValue, sTooltip, bDisabled)
     IF MENU_IS_CLICKED(bDisabled)
         KEYBOARD_STATUS eStatus = EDITING
-        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLenght)
+        DISPLAY_ONSCREEN_KEYBOARD(6, "VEUI_ENTER_TEXT", "", "", "", "", "", iLength)
         WHILE eStatus = EDITING
             eStatus = UPDATE_ONSCREEN_KEYBOARD()
             WAIT(0)
@@ -772,8 +799,8 @@ FUNC BOOL MENU_KEYBOARD_FLOAT(STRING sText, FLOAT& fValue, STRING sTooltip = NUL
         IF eStatus = FINISHED
             FLOAT fTemp
             STRING sResult = GET_ONSCREEN_KEYBOARD_RESULT()
-            IF STRING_TO_FLOAT(sResult, fTemp)
-                fValue = CLAMP_FLOAT(fTemp, fMin, fMax)
+            IF MATH_STRING_TO_FLOAT(sResult, fTemp)
+                fValue = MATH_CLAMP_FLOAT(fTemp, fMin, fMax)
                 bRetn = TRUE
             ENDIF
         ENDIF
