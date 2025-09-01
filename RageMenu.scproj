@@ -14,7 +14,7 @@
   </PlatformSettings>
   <OriginalFilename>RageMenu.scproj</OriginalFilename>
   <Language>SanScript</Language>
-  <CurrentCompilingSettingsIndex>0</CurrentCompilingSettingsIndex>
+  <CurrentCompilingSettingsIndex>1</CurrentCompilingSettingsIndex>
   <CompilingSettingsList>
     <CompilingSettings xsi:type="SanScriptCompilingSettings">
       <ConfigurationName>Release</ConfigurationName>
@@ -25,13 +25,42 @@
       <PostCompileCommand>build\Release\post-compile-release.bat</PostCompileCommand>
       <IncludeFile>core_commands.sch</IncludeFile>
       <IncludePaths>
+        <string>build\Release</string>
         <string>src\core</string>
         <string>src\features</string>
         <string>src\submenus</string>
         <string>src\util</string>
         <string>src</string>
       </IncludePaths>
-      <Custom>-final -nodebug -strictreferencetypechecking -shortcircuit -PlatformName=Win64</Custom>
+      <Custom>-final -nodebug -strictreferencetypechecking -shortcircuit -PlatformName=Win64 -aeskey "gta5"</Custom>
+      <DebugParser>false</DebugParser>
+      <DumpThreadState>false</DumpThreadState>
+      <DisplayDisassembly>false</DisplayDisassembly>
+      <HsmEnabled>false</HsmEnabled>
+      <OutputDependencyFile>false</OutputDependencyFile>
+      <OutputNativeFile>false</OutputNativeFile>
+      <WarningsAsErrors>false</WarningsAsErrors>
+      <Globals />
+      <DependencyFile>%~n1.d</DependencyFile>
+      <NativeFile>%~n1.native.txt</NativeFile>
+    </CompilingSettings>
+    <CompilingSettings xsi:type="SanScriptCompilingSettings">
+      <ConfigurationName>Release-SCOL</ConfigurationName>
+      <CompilerExecutable>tools\sc.exe</CompilerExecutable>
+      <ResourceExecutable>tools\scriptrc_x64.exe</ResourceExecutable>
+      <OutputDirectory>build\Release-SCOL\out</OutputDirectory>
+      <BuildDirectory>build\Release-SCOL\out</BuildDirectory>
+      <PostCompileCommand>build\Release-SCOL\post-compile-release-scol.bat</PostCompileCommand>
+      <IncludeFile>core_commands.sch</IncludeFile>
+      <IncludePaths>
+        <string>build\Release-SCOL</string>
+        <string>src\core</string>
+        <string>src\features</string>
+        <string>src\submenus</string>
+        <string>src\util</string>
+        <string>src</string>
+      </IncludePaths>
+      <Custom>-final -nodebug -strictreferencetypechecking -shortcircuit -PlatformName=Win64 -aeskey "gta5"</Custom>
       <DebugParser>false</DebugParser>
       <DumpThreadState>false</DumpThreadState>
       <DisplayDisassembly>false</DisplayDisassembly>
@@ -50,6 +79,9 @@
       <Items>
         <ProjectExplorerItem xsi:type="ProjectExplorerFile">
           <Name>src\core\core_commands.sch</Name>
+        </ProjectExplorerItem>
+        <ProjectExplorerItem xsi:type="ProjectExplorerFile">
+          <Name>src\core\core_enums.sch</Name>
         </ProjectExplorerItem>
         <ProjectExplorerItem xsi:type="ProjectExplorerFile">
           <Name>src\core\core_globals.sch</Name>

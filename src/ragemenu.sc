@@ -41,9 +41,12 @@ PROC CLEANUP()
 ENDPROC
 
 SCRIPT
+#IF IS_RELEASE_SCOL_BUILD
+    LOG_TO_FILE("Started script ", GET_THIS_SCRIPT_NAME(), ".")
+#ENDIF
+
     MENU_INITIALIZE()
     fpCleanupFunc = &CLEANUP
-
 
     WHILE NOT bGreeted
         GREET()
