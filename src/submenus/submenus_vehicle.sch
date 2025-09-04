@@ -21,8 +21,7 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_VEHICLE_SPAWN()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_SPAWN)
-        MENU_KEYBOARD_STRING("Model Name", tlModelName, "Enter vehicle model name.")
-        IF MENU_BUTTON("Spawn Vehicle", "Spawn vehicle by model name.")
+        IF MENU_KEYBOARD_STRING("Model Name", tlModelName, "Spawn vehicle by model name.")
             VEHICLE_SPAWN_VEHICLE(GET_HASH_KEY(tlModelName))
         ENDIF
 	

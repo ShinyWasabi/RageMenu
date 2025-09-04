@@ -5,10 +5,6 @@ USING "features_world.sch"
 TEXT_LABEL_63 tlCustomIPLName = ""
 
 PROC INIT_IPL_SET_DATA()
-    IF sIPLSetData.bInitialized
-        EXIT
-    ENDIF
-
     sIPLSetData.sIPLSetNames[0] = "North Yankton"
     sIPLSetData.sIPLSetNames[1] = "Cayo Perico"
     sIPLSetData.sIPLSetNames[2] = "Dignity Party Yacht"
@@ -21,7 +17,6 @@ PROC INIT_IPL_SET_DATA()
     sIPLSetData.sIPLSetNames[9] = "Coroner Morgue Interior"
 	
     sIPLSetData.fpGetIPLNameByIndex = &UTIL_WORLD_GET_IPL_NAME_PROLOGUE_BY_INDEX
-    sIPLSetData.bInitialized        = TRUE
 ENDPROC
 
 PROC WEATHER_BUTTON(STRING weatherName, STRING codeName)
@@ -100,8 +95,6 @@ ENDPROC
 
 PROC SUBMENUS_DRAW_WORLD_IPL()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_WORLD_IPL)
-        INIT_IPL_SET_DATA()
-
         MENU_SUBMENU_BUTTON("Custom IPL", SUBMENUS_WORLD_CUSTOM_IPL, "Manually load or unload an IPL by name.")
         IF MENU_SLIDER_STRING("IPL Set", sIPLSetData.sIPLSetNames, sIPLSetData.iCurrentIPLSetIndex, "Select from preset IPLs.")
             SWITCH sIPLSetData.iCurrentIPLSetIndex

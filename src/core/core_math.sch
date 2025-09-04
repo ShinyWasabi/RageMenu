@@ -18,7 +18,7 @@ ENDFUNC
 
 FUNC FLOAT MATH_GET_FLOAT_WIDTH(FLOAT fNumber)
     BEGIN_TEXT_COMMAND_GET_SCREEN_WIDTH_OF_DISPLAY_TEXT("NUMBER")
-    ADD_TEXT_COMPONENT_FLOAT(fNumber, 2)
+    ADD_TEXT_COMPONENT_FLOAT(fNumber, 4)
     RETURN END_TEXT_COMMAND_GET_SCREEN_WIDTH_OF_DISPLAY_TEXT(TRUE)
 ENDFUNC
 
@@ -47,33 +47,48 @@ FUNC FLOAT MATH_CLAMP_FLOAT(FLOAT fValue, FLOAT fMin, FLOAT fMax)
 ENDFUNC
 
 FUNC BOOL MATH_STRING_TO_FLOAT(STRING sString, FLOAT &fResult)
-    IF NOT IS_STRING_NULL_OR_EMPTY(sString)
-        INT i        = GET_LENGTH_OF_LITERAL_STRING(sString) - 1
-        FLOAT fBase  = 0.01
-
-        WHILE i <> -1
-            STRING sChar      = GET_CHARACTER_FROM_AUDIO_CONVERSATION_FILENAME(sString, i, i + 1)
-            INT iCharAsInt    = -1
-            BOOL bIsCharNumber = STRING_TO_INT(sChar, iCharAsInt)
-
-            IF NOT bIsCharNumber
-                BOOL bCharIsMinus = ARE_STRINGS_EQUAL(sChar, "-")
-                BOOL bCharIsPoint = ARE_STRINGS_EQUAL(sChar, ".")
-
-                IF bCharIsMinus
-                    fResult *= -1.0
-                ELIF NOT bCharIsPoint
-                    RETURN FALSE
-                ENDIF
-            ELSE
-                fResult += TO_FLOAT(iCharAsInt) * fBase
-                fBase *= 10.0
-            ENDIF
-
-            i--
-        ENDWHILE
-    ELSE
+    IF IS_STRING_NULL_OR_EMPTY(sString)
         RETURN FALSE
+    ENDIF
+
+    INT iLength = GET_LENGTH_OF_LITERAL_STRING(sString)
+    BOOL bNegative = FALSE
+    BOOL bAfterDecimal = FALSE
+    INT iDecimalCount = 0
+    fResult = 0.0
+
+    INT i
+    FOR i = 0 TO iLength - 1
+        STRING sChar = GET_CHARACTER_FROM_AUDIO_CONVERSATION_FILENAME(sString, i, i + 1)
+        INT iCharAsInt = -1
+        BOOL bIsCharNumber = STRING_TO_INT(sChar, iCharAsInt)
+
+        IF bIsCharNumber
+            IF NOT bAfterDecimal
+                fResult = fResult * 10.0 + TO_FLOAT(iCharAsInt)
+            ELSE
+                IF iDecimalCount < 4
+                    FLOAT divisor = POW(10.0, TO_FLOAT(iDecimalCount + 1)) // 10, 100, 1000, 10000
+                    fResult += TO_FLOAT(iCharAsInt) / divisor
+                    iDecimalCount++
+                ENDIF
+            ENDIF
+        ELSE
+            BOOL bCharIsMinus = ARE_STRINGS_EQUAL(sChar, "-")
+            BOOL bCharIsPoint = ARE_STRINGS_EQUAL(sChar, ".")
+
+            IF bCharIsMinus
+                bNegative = TRUE
+            ELIF bCharIsPoint
+                bAfterDecimal = TRUE
+            ELSE
+                RETURN FALSE
+            ENDIF
+        ENDIF
+    ENDFOR
+
+    IF bNegative
+        fResult *= -1.0
     ENDIF
 
     RETURN TRUE

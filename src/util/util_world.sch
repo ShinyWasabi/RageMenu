@@ -2,7 +2,6 @@ TYPEDEF FUNC STRING GetIPLNameByIndex(INT iIndex)
 
 STRUCT IPL_SET_DATA
     STRING sIPLSetNames[10]
-    BOOL bInitialized
     INT iCurrentIPLSetIndex
     GetIPLNameByIndex fpGetIPLNameByIndex
 ENDSTRUCT
