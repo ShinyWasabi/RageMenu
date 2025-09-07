@@ -20,7 +20,7 @@ STRUCT PACKED_STAT_EDITOR_DATA
     INT iPackedIntValue
     BOOL bPackedBoolValue
 ENDSTRUCT
-
+#IF IS_RELEASE_SCOL_BUILD
 STRUCT SCRIPT_STATICS_DATA
     INT iStaticType
     INT iStaticIndex
@@ -43,11 +43,13 @@ STRUCT SCRIPT_GLOBALS_DATA
     TEXT_LABEL_63 tlLabelValue
     VECTOR vVectorValue
 ENDSTRUCT
-
+#ENDIF
 STAT_EDITOR_DATA sStatEditorData
 PACKED_STAT_EDITOR_DATA sPackedStatEditorData
+#IF IS_RELEASE_SCOL_BUILD
 SCRIPT_STATICS_DATA sScriptStaticsData
 SCRIPT_GLOBALS_DATA sScriptGlobalsData
+#ENDIF
 
 PROC INIT_STAT_EDITOR_DATA()	
     sStatEditorData.sStatTypeNames[0] = "INT"
@@ -61,6 +63,7 @@ PROC INIT_PACKED_STAT_EDITOR_DATA()
     sPackedStatEditorData.sPackedStatTypeNames[1] = "BOOL"
 ENDPROC
 
+#IF IS_RELEASE_SCOL_BUILD
 PROC INIT_SCRIPT_STATICS_DATA()
     sScriptStaticsData.sStaticTypeNames[0] = "INT"
     sScriptStaticsData.sStaticTypeNames[1] = "FLOAT"
@@ -75,6 +78,7 @@ PROC INIT_SCRIPT_GLOBALS_DATA()
     sScriptGlobalsData.sGlobalTypeNames[2] = "TEXT LABEL"
     sScriptGlobalsData.sGlobalTypeNames[3] = "VECTOR"
 ENDPROC
+#ENDIF
 
 PROC SUBMENUS_DRAW_DEBUG_STAT_EDITOR()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_DEBUG_STAT_EDITOR)

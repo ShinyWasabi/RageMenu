@@ -8,16 +8,6 @@ CONST_FLOAT HORN_BOOST_SPEED_MAX       200.0
 CONST_FLOAT HORN_BOOST_SPEED_INCREMENT 0.3
 FLOAT fHornBoostSpeed = HORN_BOOST_SPEED_DEFAULT
 
-STRUCT VEHICLE_PREVIEW_DATA
-    VEHICLE_INDEX viVehicle
-    INT iModelHash
-    INT iLastModelHash
-    FLOAT fHeading
-    INT iRotationStartTime
-ENDSTRUCT
-
-VEHICLE_PREVIEW_DATA sVehiclePreviewData
-
 PROC FEATURES_VEHICLE_REPAIR()
 	SET_VEHICLE_FIXED(UTIL_VEHICLE_GET_CURRENT())
 	SET_ENTITY_HEALTH(UTIL_VEHICLE_GET_CURRENT(), 1000, NULL, 0)
@@ -171,19 +161,18 @@ ENDPROC
 
 PROC FEATURES_VEHICLE_PREVIEW_VEHICLE()
     IF NOT MENU_IS_OPEN() OR NOT MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_CLASS) OR (sVehiclePreviewData.iLastModelHash <> 0 AND sVehiclePreviewData.iModelHash <> sVehiclePreviewData.iLastModelHash)
-        DELETE_VEHICLE(sVehiclePreviewData.viVehicle)
-        sVehiclePreviewData.viVehicle = NULL
-        sVehiclePreviewData.iModelHash = 0
-        sVehiclePreviewData.iLastModelHash = 0
-        sVehiclePreviewData.fHeading = 0.0
-        sVehiclePreviewData.iRotationStartTime = 0
+        UTIL_VEHICLE_CLEANUP_PREVIEW()
         g_sFeatures.sVehicleFeatures.bShouldPreview = FALSE
         EXIT
     ENDIF
 	
     VECTOR vLocation
-    IF sVehiclePreviewData.viVehicle = NULL	
-        sVehiclePreviewData.viVehicle = UTIL_VEHICLE_SPAWN(sVehiclePreviewData.iModelHash, vLocation, 0.0)
+    IF sVehiclePreviewData.viVehicle = NULL
+        sVehiclePreviewData.viVehicle = UTIL_VEHICLE_SPAWN(sVehiclePreviewData.iModelHash, vLocation, 0.0, FALSE)
+        IF sVehiclePreviewData.viVehicle = NULL
+            EXIT // retry
+        ENDIF
+		
         SET_MODEL_AS_NO_LONGER_NEEDED(sVehiclePreviewData.iModelHash)
 		
         sVehiclePreviewData.iLastModelHash = sVehiclePreviewData.iModelHash

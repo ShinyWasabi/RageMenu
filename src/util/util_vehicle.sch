@@ -22,6 +22,16 @@ CONST_INT NUM_VEHICLES_COMMERCIAL    24
 CONST_INT NUM_VEHICLES_RAIL          11
 CONST_INT NUM_VEHICLES_OPEN_WHEEL    4
 
+STRUCT VEHICLE_PREVIEW_DATA
+    VEHICLE_INDEX viVehicle
+    INT iModelHash
+    INT iLastModelHash
+    FLOAT fHeading
+    INT iRotationStartTime
+ENDSTRUCT
+
+VEHICLE_PREVIEW_DATA sVehiclePreviewData
+
 FUNC VEHICLE_INDEX UTIL_VEHICLE_GET_CURRENT()
     RETURN GET_VEHICLE_PED_IS_IN(PLAYER_PED_ID(), TRUE)
 ENDFUNC
@@ -49,7 +59,7 @@ FUNC VECTOR UTIL_VEHICLE_GET_SPAWN_LOCATION(INT iVehicleModel)
     RETURN GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER_PED_ID(), <<0.0, fYOffset, 0.0>>)
 ENDFUNC
 
-FUNC VEHICLE_INDEX UTIL_VEHICLE_SPAWN(INT iVehicleModel, VECTOR vCoords, FLOAT fHeading)
+FUNC VEHICLE_INDEX UTIL_VEHICLE_SPAWN(INT iVehicleModel, VECTOR vCoords, FLOAT fHeading, BOOL bBlocking = TRUE)
     IF NOT IS_MODEL_IN_CDIMAGE(iVehicleModel)
         RETURN NULL
     ENDIF
@@ -57,16 +67,32 @@ FUNC VEHICLE_INDEX UTIL_VEHICLE_SPAWN(INT iVehicleModel, VECTOR vCoords, FLOAT f
     INT iLoadCounter = 0
     WHILE NOT HAS_MODEL_LOADED(iVehicleModel)
         REQUEST_MODEL(iVehicleModel)
-        WAIT(0)
-        IF iLoadCounter > 100
-            RETURN NULL
-        ELSE
+
+        IF bBlocking
+            WAIT(0)
+            IF iLoadCounter > 100
+                RETURN NULL
+            ENDIF
             iLoadCounter++
+        ELSE
+            // non-blocking: just return until it's ready.
+            RETURN NULL
         ENDIF
     ENDWHILE
-	
+
     RETURN CREATE_VEHICLE(iVehicleModel, vCoords, fHeading, FALSE, FALSE, TRUE)
 ENDFUNC
+
+PROC UTIL_VEHICLE_CLEANUP_PREVIEW()
+    IF sVehiclePreviewData.viVehicle <> NULL
+        DELETE_VEHICLE(sVehiclePreviewData.viVehicle)
+        sVehiclePreviewData.viVehicle = NULL
+    ENDIF
+    sVehiclePreviewData.iModelHash = 0
+    sVehiclePreviewData.iLastModelHash = 0
+    sVehiclePreviewData.fHeading = 0.0
+    sVehiclePreviewData.iRotationStartTime = 0
+ENDPROC
 
 FUNC INT UTIL_VEHICLE_GET_NUM_VEHICLES_IN_CLASS(VEHICLE_CLASS eClass)
     SWITCH eClass
