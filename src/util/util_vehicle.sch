@@ -49,6 +49,25 @@ FUNC VECTOR UTIL_VEHICLE_GET_SPAWN_LOCATION(INT iVehicleModel)
     RETURN GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER_PED_ID(), <<0.0, fYOffset, 0.0>>)
 ENDFUNC
 
+FUNC VEHICLE_INDEX UTIL_VEHICLE_SPAWN(INT iVehicleModel, VECTOR vCoords, FLOAT fHeading)
+    IF NOT IS_MODEL_IN_CDIMAGE(iVehicleModel)
+        RETURN NULL
+    ENDIF
+
+    INT iLoadCounter = 0
+    WHILE NOT HAS_MODEL_LOADED(iVehicleModel)
+        REQUEST_MODEL(iVehicleModel)
+        WAIT(0)
+        IF iLoadCounter > 100
+            RETURN NULL
+        ELSE
+            iLoadCounter++
+        ENDIF
+    ENDWHILE
+	
+    RETURN CREATE_VEHICLE(iVehicleModel, vCoords, fHeading, FALSE, FALSE, TRUE)
+ENDFUNC
+
 FUNC INT UTIL_VEHICLE_GET_NUM_VEHICLES_IN_CLASS(VEHICLE_CLASS eClass)
     SWITCH eClass
         CASE VC_COMPACT       RETURN NUM_VEHICLES_COMPACT

@@ -1,3 +1,5 @@
+USING "core_menu.sch" // Importing these two here is bad
+USING "core_globals.sch"
 USING "util_vehicle.sch"
 USING "util_teleport.sch"
 
@@ -5,6 +7,16 @@ CONST_FLOAT HORN_BOOST_SPEED_DEFAULT   10.0
 CONST_FLOAT HORN_BOOST_SPEED_MAX       200.0
 CONST_FLOAT HORN_BOOST_SPEED_INCREMENT 0.3
 FLOAT fHornBoostSpeed = HORN_BOOST_SPEED_DEFAULT
+
+STRUCT VEHICLE_PREVIEW_DATA
+    VEHICLE_INDEX viVehicle
+    INT iModelHash
+    INT iLastModelHash
+    FLOAT fHeading
+    INT iRotationStartTime
+ENDSTRUCT
+
+VEHICLE_PREVIEW_DATA sVehiclePreviewData
 
 PROC FEATURES_VEHICLE_REPAIR()
 	SET_VEHICLE_FIXED(UTIL_VEHICLE_GET_CURRENT())
@@ -147,24 +159,49 @@ PROC FEATURES_VEHICLE_SPEEDO_METER()
     END_TEXT_COMMAND_DISPLAY_TEXT(0.903, 0.76, 1)
 ENDPROC
 
-PROC VEHICLE_SPAWN_VEHICLE(INT iVehicleModel)
-    IF NOT IS_MODEL_IN_CDIMAGE(iVehicleModel)
+PROC FEATURES_VEHICLE_SPAWN_VEHICLE(INT iVehicleModel)
+    VEHICLE_INDEX viVeh = UTIL_VEHICLE_SPAWN(iVehicleModel, UTIL_VEHICLE_GET_SPAWN_LOCATION(iVehicleModel), GET_ENTITY_HEADING(PLAYER_PED_ID()))
+    IF viVeh <> NULL
+        SET_VEHICLE_IS_STOLEN(viVeh, FALSE)
+        SET_PED_INTO_VEHICLE(PLAYER_PED_ID(), viVeh, -1)
+        SET_MODEL_AS_NO_LONGER_NEEDED(iVehicleModel)
+        SET_VEHICLE_AS_NO_LONGER_NEEDED(viVeh)
+    ENDIF
+ENDPROC
+
+PROC FEATURES_VEHICLE_PREVIEW_VEHICLE()
+    IF NOT MENU_IS_OPEN() OR NOT MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_CLASS) OR (sVehiclePreviewData.iLastModelHash <> 0 AND sVehiclePreviewData.iModelHash <> sVehiclePreviewData.iLastModelHash)
+        DELETE_VEHICLE(sVehiclePreviewData.viVehicle)
+        sVehiclePreviewData.viVehicle = NULL
+        sVehiclePreviewData.iModelHash = 0
+        sVehiclePreviewData.iLastModelHash = 0
+        sVehiclePreviewData.fHeading = 0.0
+        sVehiclePreviewData.iRotationStartTime = 0
+        g_sFeatures.sVehicleFeatures.bShouldPreview = FALSE
         EXIT
     ENDIF
-
-    INT iLoadCounter = 0
-    WHILE NOT HAS_MODEL_LOADED(iVehicleModel)
-        REQUEST_MODEL(iVehicleModel)
-        WAIT(0)
-        IF iLoadCounter > 100
-            EXIT
-        ELSE
-            iLoadCounter++
-        ENDIF
-    ENDWHILE
-    VEHICLE_INDEX viVeh = CREATE_VEHICLE(iVehicleModel, UTIL_VEHICLE_GET_SPAWN_LOCATION(iVehicleModel), GET_ENTITY_HEADING(PLAYER_PED_ID()), FALSE, FALSE, TRUE)
-    SET_VEHICLE_IS_STOLEN(viVeh, FALSE)
-    SET_PED_INTO_VEHICLE(PLAYER_PED_ID(), viVeh, -1)
-    SET_MODEL_AS_NO_LONGER_NEEDED(iVehicleModel)
-    SET_VEHICLE_AS_NO_LONGER_NEEDED(viVeh)
+	
+    VECTOR vLocation
+    IF sVehiclePreviewData.viVehicle = NULL	
+        sVehiclePreviewData.viVehicle = UTIL_VEHICLE_SPAWN(sVehiclePreviewData.iModelHash, vLocation, 0.0)
+        SET_MODEL_AS_NO_LONGER_NEEDED(sVehiclePreviewData.iModelHash)
+		
+        sVehiclePreviewData.iLastModelHash = sVehiclePreviewData.iModelHash
+        sVehiclePreviewData.fHeading = 0.0
+        sVehiclePreviewData.iRotationStartTime = GET_GAME_TIMER()
+		
+        FREEZE_ENTITY_POSITION(sVehiclePreviewData.viVehicle, TRUE)
+        SET_ENTITY_ALPHA(sVehiclePreviewData.viVehicle, 200, FALSE)
+        SET_ENTITY_COLLISION(sVehiclePreviewData.viVehicle, FALSE, FALSE)
+        SET_ENTITY_CAN_BE_DAMAGED(sVehiclePreviewData.viVehicle, FALSE)
+        SET_ENTITY_PROOFS(sVehiclePreviewData.viVehicle, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+        SET_CAN_CLIMB_ON_ENTITY(sVehiclePreviewData.viVehicle, FALSE)
+    ENDIF
+	
+    vLocation = GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER_PED_ID(), <<0.0, 10.0, 0.5>>)
+    SET_ENTITY_HEADING(sVehiclePreviewData.viVehicle, sVehiclePreviewData.fHeading)
+    SET_ENTITY_COORDS(sVehiclePreviewData.viVehicle, vLocation, FALSE, FALSE, FALSE, FALSE)
+	
+    INT iDeltaTime = GET_GAME_TIMER() - sVehiclePreviewData.iRotationStartTime
+    sVehiclePreviewData.fHeading = TO_FLOAT(iDeltaTime) * 0.036
 ENDPROC

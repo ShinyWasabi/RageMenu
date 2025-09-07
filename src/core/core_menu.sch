@@ -172,6 +172,10 @@ PROC MENU_HANDLE_INPUT()
     ENDIF
 ENDPROC
 
+FUNC BOOL MENU_IS_OPEN()
+    RETURN sMenuData.bIsOpen
+ENDFUNC
+
 FUNC BOOL MENU_SHOULD_RENDER()
     IF sMenuData.iCurPosDef < sMenuData.iCurView OR 
        sMenuData.iCurPosDef >= (sMenuData.iCurView + MAX_VIEW_ITEMS)

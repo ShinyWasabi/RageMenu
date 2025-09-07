@@ -52,6 +52,9 @@ PROC FEATURES_RUN_VEHICLE()
     IF g_sFeatures.sVehicleFeatures.bSpeedoMeter
         FEATURES_VEHICLE_SPEEDO_METER()
     ENDIF
+    IF g_sFeatures.sVehicleFeatures.bShouldPreview
+        FEATURES_VEHICLE_PREVIEW_VEHICLE()
+    ENDIF
 ENDPROC
 
 PROC FEATURES_RUN_WEAPONS()

@@ -21,6 +21,7 @@ STRUCT FEATURES_VEHICLE
     BOOL bAlwaysRepaired
     BOOL bHornBoost
     BOOL bSpeedoMeter
+    BOOL bShouldPreview
 ENDSTRUCT
 
 STRUCT FEATURES_WEAPONS

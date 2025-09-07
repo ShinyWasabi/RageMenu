@@ -12,8 +12,14 @@ PROC SUBMENUS_DRAW_VEHICLE_CLASS()
         REPEAT iMaxVehicles iIndex
             INT iVehicleHash = UTIL_VEHICLE_GET_VEHICLE_HASH_FROM_CLASS_BY_INDEX(eSelectedVehicleClass, iIndex)
             STRING sButtonName = GET_FILENAME_FOR_AUDIO_CONVERSATION(GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(iVehicleHash))
+			
+            IF MENU_IS_FOCUSED()
+                sVehiclePreviewData.iModelHash = iVehicleHash
+                g_sFeatures.sVehicleFeatures.bShouldPreview = TRUE
+            ENDIF
+			
             IF MENU_BUTTON(sButtonName)
-                VEHICLE_SPAWN_VEHICLE(iVehicleHash)
+                FEATURES_VEHICLE_SPAWN_VEHICLE(iVehicleHash)
             ENDIF
         ENDREPEAT
     ENDIF
@@ -22,7 +28,7 @@ ENDPROC
 PROC SUBMENUS_DRAW_VEHICLE_SPAWN()
     IF MENU_BEGIN_SUBMENU(SUBMENUS_VEHICLE_SPAWN)
         IF MENU_KEYBOARD_STRING("Model Name", tlModelName, "Spawn vehicle by model name.")
-            VEHICLE_SPAWN_VEHICLE(GET_HASH_KEY(tlModelName))
+            FEATURES_VEHICLE_SPAWN_VEHICLE(GET_HASH_KEY(tlModelName))
         ENDIF
 	
         INT iIndex = 0
