@@ -54,6 +54,8 @@ STRUCT MENU_DATA
     INT iCurMenuDef
     INT iCurPosDef
     INT iChangingToMenu = -1
+    FLOAT fPosX = 0.8
+    FLOAT fPosY = 0.1
     FLOAT fYValue
     STRING sToolTipText = NULL
     SCALEFORM_INDEX siScaleform = NULL
@@ -362,7 +364,7 @@ PROC MENU_DISABLE_CONTROLS()
 ENDPROC
 
 PROC MENU_DRAW_HEADER()
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.05, 0.21, 0.100, 0, 150, 255, 255, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.05, 0.21, 0.100, 0, 150, 255, 255, FALSE)
 
     BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING")
     ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME("RageMenu")
@@ -372,22 +374,20 @@ PROC MENU_DRAW_HEADER()
     SET_TEXT_SCALE(1.0, 1.0)
     SET_TEXT_FONT(6)
     SET_TEXT_DROP_SHADOW()
-    END_TEXT_COMMAND_DISPLAY_TEXT(0.8, (sMenuData.fYValue + 0.07) - GET_RENDERED_CHARACTER_HEIGHT(1.0, 6), 0)
+    END_TEXT_COMMAND_DISPLAY_TEXT(sMenuData.fPosX, (sMenuData.fYValue + 0.07) - GET_RENDERED_CHARACTER_HEIGHT(1.0, 6), 0)
 
     sMenuData.fYValue += 0.1
 ENDPROC
 
 PROC MENU_DRAW_TITLE()
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.005, 0.21, 0.029, 0, 0, 0, 255, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.005, 0.21, 0.029, 0, 0, 0, 255, FALSE)
     
     BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING")
     ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(MENU_GET_SUBMENU_TITLE(sMenuData.eCurMenu))
-    
     SET_TEXT_COLOUR(255, 255, 255, 255)
     SET_TEXT_SCALE(0.33, 0.33)
     SET_TEXT_FONT(0)
-    
-    END_TEXT_COMMAND_DISPLAY_TEXT(0.7, (sMenuData.fYValue + 0.004) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), 0)
+    END_TEXT_COMMAND_DISPLAY_TEXT(sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.004) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), 0)
     
     TEXT_LABEL tlNumItems = ""
     tlNumItems += sMenuData.iCurPos + 1
@@ -396,13 +396,12 @@ PROC MENU_DRAW_TITLE()
     BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING")
     ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(tlNumItems)
     
-    SET_TEXT_WRAP(0, 0.9)
+    SET_TEXT_WRAP(sMenuData.fPosX - (0.21 / 2.0) + 0.005, sMenuData.fPosX + (0.21 / 2.0) - 0.005)
     SET_TEXT_RIGHT_JUSTIFY(TRUE)
     SET_TEXT_COLOUR(255, 255, 255, 255)
     SET_TEXT_SCALE(0.33, 0.33)
     SET_TEXT_FONT(0)
-    
-    END_TEXT_COMMAND_DISPLAY_TEXT(0.9, (sMenuData.fYValue + 0.004) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), 0)
+    END_TEXT_COMMAND_DISPLAY_TEXT(sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.004) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), 0)
     
     sMenuData.fYValue += 0.019
 ENDPROC
@@ -412,16 +411,19 @@ PROC MENU_DRAW_TOOLTIP()
         EXIT
     ENDIF
 
-    INT iNumLines     = MATH_GET_NUM_LINES_TOOLTIP(sMenuData.sToolTipText)
-    FLOAT fLineHeight = GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) * 1.1
-    FLOAT fRectHeight = fLineHeight * iNumLines + 0.03
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.025 + (fRectHeight / 2) - (0.038 / 2), 0.21, fRectHeight, 23, 23, 23, 210, FALSE)
+    INT iNumLines       = MATH_GET_NUM_LINES_TOOLTIP(sMenuData.sToolTipText)
+    FLOAT fLineHeight   = GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) * 1.1
+    FLOAT fRectHeight   = fLineHeight * iNumLines + 0.03
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.025 + (fRectHeight / 2.0) - (0.038 / 2.0), 0.21, fRectHeight, 23, 23, 23, 210, FALSE)
 
-    SET_TEXT_SCALE(0.33, 0.33)
-    SET_TEXT_WRAP(0.0, 0.9)
     BEGIN_TEXT_COMMAND_DISPLAY_TEXT("STRING")
     ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(sMenuData.sToolTipText)
-    END_TEXT_COMMAND_DISPLAY_TEXT(0.7, sMenuData.fYValue + 0.013, 0)
+
+    SET_TEXT_SCALE(0.33, 0.33)
+    SET_TEXT_FONT(0)
+    SET_TEXT_WRAP(sMenuData.fPosX - (0.21 / 2.0) + 0.005, sMenuData.fPosX + (0.21 / 2.0) - 0.005)
+
+    END_TEXT_COMMAND_DISPLAY_TEXT(sMenuData.fPosX - 0.10, sMenuData.fYValue + 0.013, 0)
 ENDPROC
 
 PROC MENU_DRAW_INSTRUCTIONAL_BUTTONS()
@@ -508,12 +510,12 @@ PROC MENU_DRAW_OPTION_STRING(STRING sLeft, STRING sRight = NULL, STRING sTooltip
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF NOT IS_STRING_NULL_OR_EMPTY(sRight)
-        MENU_DRAW_TEXT_STRING(sRight, 0.9, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(sRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
     ENDIF
 
     IF MENU_IS_FOCUSED()
@@ -531,11 +533,11 @@ PROC MENU_DRAW_OPTION_INTEGER(STRING sLeft, INT iRight, STRING sTooltip = NULL, 
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
-    MENU_DRAW_TEXT_INTEGER(iRight, 0.9, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+    MENU_DRAW_TEXT_INTEGER(iRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
     IF MENU_IS_FOCUSED()
         sMenuData.sToolTipText = sTooltip
@@ -552,11 +554,11 @@ PROC MENU_DRAW_OPTION_FLOAT(STRING sLeft, FLOAT fRight, STRING sTooltip = NULL, 
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
-    MENU_DRAW_TEXT_FLOAT(fRight, 0.9, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+    MENU_DRAW_TEXT_FLOAT(fRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.019) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.725), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
     IF MENU_IS_FOCUSED()
         sMenuData.sToolTipText = sTooltip
@@ -573,18 +575,18 @@ PROC MENU_DRAW_SLIDER_STRING(STRING sLeft, STRING sRight, STRING sTooltip = NULL
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_STRING_WIDTH(sRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_STRING(sRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", (sMenuData.fPosX + 0.092) - MATH_GET_STRING_WIDTH(sRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(">", sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(sRight, sMenuData.fPosX + 0.093, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
         
         sMenuData.sToolTipText = sTooltip
     ELSE
-        MENU_DRAW_TEXT_STRING(sRight, 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(sRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
     ENDIF
 
     sMenuData.fYValue += 0.038
@@ -598,18 +600,18 @@ PROC MENU_DRAW_SLIDER_INTEGER(STRING sLeft, INT iRight, STRING sTooltip = NULL, 
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_INTEGER_WIDTH(iRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_INTEGER(iRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", (sMenuData.fPosX + 0.092) - MATH_GET_INTEGER_WIDTH(iRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(">", sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_INTEGER(iRight, sMenuData.fPosX + 0.093, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
         sMenuData.sToolTipText = sTooltip
     ELSE
-        MENU_DRAW_TEXT_INTEGER(iRight, 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_INTEGER(iRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
     ENDIF
 
     sMenuData.fYValue += 0.038
@@ -623,18 +625,18 @@ PROC MENU_DRAW_SLIDER_FLOAT(STRING sLeft, FLOAT fRight, STRING sTooltip = NULL, 
     MENU_COLOURS sColours
     MENU_GET_COLOURS(sColours, bDisabled)
 
-    DRAW_RECT(0.8, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
+    DRAW_RECT(sMenuData.fPosX, sMenuData.fYValue + 0.019, 0.21, 0.038, sColours.sRect.iRed, sColours.sRect.iGreen, sColours.sRect.iBlue, sColours.sRect.iAlpha, FALSE)
 
-    MENU_DRAW_TEXT_STRING(sLeft, 0.7, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
+    MENU_DRAW_TEXT_STRING(sLeft, sMenuData.fPosX - 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha)
 
     IF MENU_IS_FOCUSED()
-        MENU_DRAW_TEXT_STRING("<", 0.892 - MATH_GET_FLOAT_WIDTH(fRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_STRING(">", 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
-        MENU_DRAW_TEXT_FLOAT(fRight, 0.893, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING("<", (sMenuData.fPosX + 0.092) - MATH_GET_FLOAT_WIDTH(fRight) / 3.4, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_STRING(">", sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_FLOAT(fRight, sMenuData.fPosX + 0.093, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
 
         sMenuData.sToolTipText = sTooltip
     ELSE
-        MENU_DRAW_TEXT_FLOAT(fRight, 0.9, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
+        MENU_DRAW_TEXT_FLOAT(fRight, sMenuData.fPosX + 0.10, (sMenuData.fYValue + 0.018) - (GET_RENDERED_CHARACTER_HEIGHT(0.33, 0) / 1.5), sColours.sText.iRed, sColours.sText.iGreen, sColours.sText.iBlue, sColours.sText.iAlpha, TRUE)
     ENDIF
 
     sMenuData.fYValue += 0.038
@@ -708,18 +710,18 @@ FUNC BOOL MENU_SLIDER_STRING(STRING sText, STRING& sStrings[], INT& iCurrentItem
     RETURN bRetn
 ENDFUNC
 
-FUNC BOOL MENU_SLIDER_INTEGER(STRING sText, INT& iValue, INT iMin, INT iMax, STRING sTooltip = NULL, BOOL bDisabled = FALSE)
+FUNC BOOL MENU_SLIDER_INTEGER(STRING sText, INT& iValue, INT iMin, INT iMax, STRING sTooltip = NULL, BOOL bDisabled = FALSE, INT iStep = 1)
     BOOL bRetn = FALSE
 
     MENU_DRAW_SLIDER_INTEGER(sText, iValue, sTooltip, bDisabled)
     IF (MENU_IS_INCREMENTED(bDisabled))
-        iValue++
+        iValue += iStep
         IF iValue > iMax
             iValue = iMin
         ENDIF
         bRetn = TRUE
     ELIF (MENU_IS_DECREMENTED(bDisabled))
-        iValue--
+        iValue += iStep
         IF iValue < iMin
             iValue = iMax
         ENDIF
@@ -730,18 +732,18 @@ FUNC BOOL MENU_SLIDER_INTEGER(STRING sText, INT& iValue, INT iMin, INT iMax, STR
     RETURN bRetn
 ENDFUNC
 
-FUNC BOOL MENU_SLIDER_FLOAT(STRING sText, FLOAT& fValue, FLOAT fMin, FLOAT fMax, STRING sTooltip = NULL, BOOL bDisabled = FALSE)
+FUNC BOOL MENU_SLIDER_FLOAT(STRING sText, FLOAT& fValue, FLOAT fMin, FLOAT fMax, STRING sTooltip = NULL, BOOL bDisabled = FALSE, FLOAT fStep = 1.0)
     BOOL bRetn = FALSE
 
     MENU_DRAW_SLIDER_FLOAT(sText, fValue, sTooltip, bDisabled)
     IF (MENU_IS_INCREMENTED(bDisabled))
-        fValue++
+        fValue += fStep
         IF fValue > fMax
             fValue = fMin
         ENDIF
         bRetn = TRUE
     ELIF (MENU_IS_DECREMENTED(bDisabled))
-        fValue--
+        fValue -= fStep
         IF fValue < fMin
             fValue = fMax
         ENDIF
@@ -844,7 +846,7 @@ ENDPROC
 FUNC BOOL MENU_BEGIN()
     sMenuData.iCurMenuDef   = 0
     sMenuData.iCurPosDef    = 0
-    sMenuData.fYValue       = 0.1
+    sMenuData.fYValue       = sMenuData.fPosY
     sMenuData.bClicked      = FALSE
     sMenuData.bIncremented  = FALSE
     sMenuData.bDecremented  = FALSE

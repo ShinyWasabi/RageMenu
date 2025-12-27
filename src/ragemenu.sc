@@ -41,11 +41,11 @@ PROC CLEANUP()
     TERMINATE_THIS_THREAD() // This only sets the thread state to KILLED, it doesn't release the script program. So we'll still have to call KillGtaThread from SCOL after calling CLEANUP.
 ENDPROC
 
-PROC BACKGROUND_LOOP()
 #IF IS_RELEASE_SCOL_BUILD
-    SCRIPT_GLOBAL_SET_INT(4542730, 1) // Disable MP vehicles removal in SP
-#ENDIF
+PROC BACKGROUND_LOOP()
+    SCRIPT_GLOBAL_SET_INT(4520961, 1) // Disable MP vehicles removal in SP
 ENDPROC
+#ENDIF
 
 SCRIPT
 #IF IS_RELEASE_SCOL_BUILD
@@ -70,7 +70,9 @@ SCRIPT
     WHILE TRUE
         SUBMENUS_DRAW_MAIN()
         FEATURES_RUN_MAIN()
+#IF IS_RELEASE_SCOL_BUILD		
         BACKGROUND_LOOP()
+#ENDIF
         WAIT(0)
     ENDWHILE
 	

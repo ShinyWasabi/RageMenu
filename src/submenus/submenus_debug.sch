@@ -317,6 +317,8 @@ PROC SUBMENUS_DRAW_DEBUG()
         MENU_SUBMENU_BUTTON("Script Statics", SUBMENUS_DEBUG_SCRIPT_STATICS, "Edit script statics.")
         MENU_SUBMENU_BUTTON("Script Globals", SUBMENUS_DEBUG_SCRIPT_GLOBALS, "Edit script globals.")
 #ENDIF
+        MENU_SLIDER_FLOAT("Menu X Pos", sMenuData.fPosX, FLOAT_MIN, FLOAT_MAX, "Set menu X position.", FALSE, 0.01)
+        MENU_SLIDER_FLOAT("Menu Y Pos", sMenuData.fPosY, FLOAT_MIN, FLOAT_MAX, "Set menu Y position.", FALSE, 0.01)
         IF MENU_BUTTON("Unload", "Disables all features, frees resources, and terminates the script.")
             CALL fpCleanupFunc()
         ENDIF
